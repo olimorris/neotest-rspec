@@ -61,9 +61,20 @@ function NeotestAdapter.build_spec(args)
     '-o',
     results_path,
   })
-  if position then
-    table.insert(script_args, position.id)
+
+  if position.type == 'file' then
+    table.insert(script_args, position.path)
   end
+  if position.type == 'test' or position.type == "namespace" then
+    table.insert(
+      script_args,
+      vim.tbl_flatten({
+        '-e',
+        position.name,
+      })
+    )
+  end
+
   local command = vim.tbl_flatten({
     runner,
     script_args,
