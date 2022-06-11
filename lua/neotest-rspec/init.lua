@@ -1,4 +1,4 @@
----@diagnostic disable: undefined-field
+local async = require("neotest.async")
 local lib = require('neotest.lib')
 local logger = require('neotest.logging')
 
@@ -47,12 +47,19 @@ end
 ---@return neotest.RunSpec | nil
 function NeotestAdapter.build_spec(args)
   local position = args.tree:data()
+  local results_path = async.fn.tempname()
   local root = NeotestAdapter.root(position.path)
 
-  local runner = 'bundle exec rspec'
+  local runner = vim.tbl_flatten({
+    'bundle',
+    'exec',
+    'rspec'
+  })
   local script_args = vim.tbl_flatten({
     '-f',
     'json',
+    '-o',
+    results_path
   })
   if position then
     table.insert(script_args, position.id)
@@ -64,6 +71,9 @@ function NeotestAdapter.build_spec(args)
 
   return {
     command = command,
+    context = {
+      results_path = results_path,
+    },
   }
 end
 
