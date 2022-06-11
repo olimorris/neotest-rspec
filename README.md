@@ -1,6 +1,6 @@
 # neotest-rspec
 
-This plugin provides an [RSpec](https://rspec.info) adapter for the [Neotest](https://github.com/rcarriga/neotest) framework.
+This plugin provides an [RSpec](https://rspec.info) adapter for the [Neotest](https://github.com/nvim-neotest/neotest) framework.
 **It is currently a work in progress**. It will be transferred to the official neotest organisation (once it's been created).
 
 ## Installation
@@ -9,7 +9,7 @@ Using packer:
 
 ```lua
 use({
-  'rcarriga/neotest',
+  'nvim-neotest/neotest',
   requires = {
     ...,
     'olimorris/neotest-rspec',
