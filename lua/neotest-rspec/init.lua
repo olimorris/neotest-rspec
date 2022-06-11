@@ -17,10 +17,7 @@ NeotestAdapter.root = lib.files.match_root_pattern({ 'Gemfile', '.rspec' })
 ---@param file_path string
 ---@return boolean
 function NeotestAdapter.is_test_file(file_path)
-  if not vim.endswith(file_path, '_spec.rb') then
-    return false
-  end
-  return true
+  return vim.endswith(file_path, '_spec.rb') and true or false
 end
 
 ---Given a file path, parse all the tests within it.
@@ -88,16 +85,7 @@ function NeotestAdapter.build_spec(args)
   }
 end
 
-local function cleanAnsi(s)
-  return s
-    :gsub('\x1b%[%d+;%d+;%d+;%d+;%d+m', '')
-    :gsub('\x1b%[%d+;%d+;%d+;%d+m', '')
-    :gsub('\x1b%[%d+;%d+;%d+m', '')
-    :gsub('\x1b%[%d+;%d+m', '')
-    :gsub('\x1b%[%d+m', '')
-end
-
-local function parsed_json_to_results(data, output_file)
+local function parse_json_output(data, output_file)
   local tests = {}
   local failed = false
 
@@ -108,7 +96,7 @@ local function parsed_json_to_results(data, output_file)
       return {}, failed
     end
 
-    local keyid = result.file_path .. "::" .. result.line_number
+    local keyid = result.file_path .. '::' .. result.line_number
     tests[keyid] = {
       status = status == 'pending' and 'skipped' or status,
       short = name .. ': ' .. status,
@@ -116,7 +104,7 @@ local function parsed_json_to_results(data, output_file)
       location = result.file_path,
     }
 
-    if result.status == 'failed' then
+    if status == 'failed' then
       failed = true
       local errors = {}
       local failure_msg = result.exception.message
@@ -146,12 +134,11 @@ function NeotestAdapter.results(spec, _, tree)
 
   local ok, parsed = pcall(vim.json.decode, data, { luanil = { object = true } })
   if not ok then
-    logger.error('Failed to parse test output json ', output_file)
+    logger.error('Failed to parse test output ', output_file)
     return {}
   end
 
-  local results, failed = parsed_json_to_results(parsed, output_file)
-  om.print_table(results)
+  local results, failed = parse_json_output(parsed, output_file)
   for _, value in tree:iter() do
     if value.type ~= 'file' or value.type ~= 'namespace' then
       logger.error('Failed to find test result ', value)
@@ -165,6 +152,8 @@ function NeotestAdapter.results(spec, _, tree)
       results[value.id].status = 'failed'
     end
   end
+  om.print_table(results)
+
   return results
 end
 
