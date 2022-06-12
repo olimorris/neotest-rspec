@@ -31,7 +31,6 @@ function NeotestAdapter.discover_positions(path)
       arguments: (argument_list (_) @namespace.name)
   )) @namespace.definition
 
-
   ((call
     method: (identifier) @func_name (#eq? @func_name "it")
     arguments: (argument_list (_) @test.name)
@@ -62,15 +61,16 @@ function NeotestAdapter.build_spec(args)
   if position.type == 'file' then
     table.insert(script_args, position.path)
   end
-  if position.type == 'test' or position.type == "namespace" then
-    table.insert(
-      script_args,
-      vim.tbl_flatten({
-        '-e',
-        position.name,
-      })
-    )
-  end
+  -- TODO: Write command for single tests to improve performance in large RSpec files
+  -- if position.type == 'test' or position.type == 'namespace' then
+  --   table.insert(
+  --     script_args,
+  --     vim.tbl_flatten({
+  --       '-e',
+  --       position.name,
+  --     })
+  --   )
+  -- end
 
   local command = vim.tbl_flatten({
     runner,
@@ -85,37 +85,34 @@ function NeotestAdapter.build_spec(args)
   }
 end
 
-local function parse_json_output(data, output_file)
+local function parse_json_output(data, output_file, tree)
   local tests = {}
-  local failed = false
 
-  for _, result in pairs(data.examples) do
-    local status, name = result.status, result.description
-    if name == nil then
-      logger.error('Failed to find parsed test result ', result)
-      return {}, failed
-    end
+  for _, value in tree:iter() do
+    -- Link the neotest id to the RSpec output
+    local test_id = value.id:gsub(value.path, ''):gsub('::', ' '):gsub('"', ''):gsub("'", ''):sub(2)
 
-    local keyid = result.file_path .. '::' .. result.line_number
-    tests[keyid] = {
-      status = status == 'pending' and 'skipped' or status,
-      short = name .. ': ' .. status,
-      output = output_file,
-      location = result.file_path,
-    }
-
-    if status == 'failed' then
-      failed = true
-      local errors = {}
-      local failure_msg = result.exception.message
-      tests[keyid].short = tests[keyid].short .. '\n' .. failure_msg
-      tests[keyid].errors = {
-        line = result.line_number,
-        msg = failure_msg,
-      }
+    -- Get the test result from the parsed data
+    for _, result in pairs(data.examples) do
+      if result.full_description == test_id then
+        local status, name = result.status, result.description
+        if not tests[value.id] then
+          tests[value.id] = {
+            status = status == 'pending' and 'skipped' or status,
+            short = test_id .. ': ' .. status,
+            output = output_file,
+            location = result.line_number,
+          }
+          if result.exception then
+            tests[value.id].short = tests[value.id].short .. '\n' .. result.exception.message
+            tests[value.id].errors = result.exception.backtrace
+          end
+        end
+      end
     end
   end
-  return tests, failed
+
+  return tests
 end
 
 ---@async
@@ -123,7 +120,7 @@ end
 ---@param result neotest.StrategyResult
 ---@param tree neotest.Tree
 ---@return neotest.Result[]
-function NeotestAdapter.results(spec, _, tree)
+function NeotestAdapter.results(spec, result, tree)
   local output_file = spec.context.results_path
 
   local success, data = pcall(lib.files.read, output_file)
@@ -132,29 +129,13 @@ function NeotestAdapter.results(spec, _, tree)
     return {}
   end
 
-  local ok, parsed = pcall(vim.json.decode, data, { luanil = { object = true } })
+  local ok, parsed_data = pcall(vim.json.decode, data, { luanil = { object = true } })
   if not ok then
     logger.error('Failed to parse test output ', output_file)
     return {}
   end
 
-  local results, failed = parse_json_output(parsed, output_file)
-  for _, value in tree:iter() do
-    if value.type ~= 'file' or value.type ~= 'namespace' then
-      logger.error('Failed to find test result ', value)
-      return results
-    end
-    results[value.id] = {
-      status = 'passed',
-      output = output_file,
-    }
-    if failed then
-      results[value.id].status = 'failed'
-    end
-  end
-  om.print_table(results)
-
-  return results
+  return parse_json_output(parsed_data, output_file, tree)
 end
 
 setmetatable(NeotestAdapter, {
