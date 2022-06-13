@@ -40,4 +40,6 @@ luac.out
 *.hex
 
 # Others
+plenary.nvim/
+output.json
 .luarc.json
