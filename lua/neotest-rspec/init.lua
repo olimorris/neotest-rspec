@@ -38,7 +38,6 @@ function NeotestAdapter.discover_positions(path)
     ]]
 
   -- https://github.com/nvim-neotest/neotest/issues/9#issuecomment-1153155967
-  local content = lib.files.read(path)
   local opts = {
     nested_tests = true,
     require_namespaces = true,
@@ -59,7 +58,7 @@ function NeotestAdapter.discover_positions(path)
       ):gsub("'<TS>", ''):gsub('<TS>"', ''):gsub('"<TS>', ''):gsub('<NS>', '')
     end,
   }
-  return lib.treesitter.parse_positions_from_string(path, content, query, opts)
+  return lib.treesitter.parse_positions(path, query, opts)
 end
 
 ---@param test_name string
