@@ -62,6 +62,18 @@ function NeotestAdapter.discover_positions(path)
   return lib.treesitter.parse_positions_from_string(path, content, query, opts)
 end
 
+---@param test_name string
+---@return string
+local function remove_quotations(test_name)
+  if string.sub(test_name, -1) == '"' or string.sub(test_name, -1) == "'" then
+    test_name = test_name:sub(1, -2)
+  end
+  if string.sub(test_name, 1, 1) == '"' or string.sub(test_name, 1, 1) == "'" then
+    test_name = test_name:sub(2, #test_name)
+  end
+  return test_name
+end
+
 ---@param args neotest.RunArgs
 ---@return neotest.RunSpec | nil
 function NeotestAdapter.build_spec(args)
@@ -86,20 +98,11 @@ function NeotestAdapter.build_spec(args)
   end
 
   if position.type == 'test' or position.type == 'namespace' then
-    -- Chop ' or " from start and end of the test name
-    local test_name = position.name
-    if string.sub(test_name, -1) == '"' or string.sub(test_name, -1) == "'" then
-      test_name = test_name:sub(1, -2)
-    end
-    if string.sub(test_name, 1, 1) == '"' or string.sub(test_name, 1, 1) == "'" then
-      test_name = test_name:sub(2, #test_name)
-    end
-
     table.insert(
       script_args,
       vim.tbl_flatten({
         '-e',
-        test_name
+        remove_quotations(position.name),
       })
     )
   end
@@ -129,7 +132,9 @@ local function parse_json_output(data, output_file)
 
     tests[test_id] = {
       status = result.status == 'pending' and 'skipped' or result.status,
-      short = string.upper(test_file:gsub('.rb', '')) .. '\n> ' .. result.description .. ': ' .. string.upper(result.status),
+      short = string.upper(test_file:gsub('.rb', '')) .. '\n> ' .. result.description .. ': ' .. string.upper(
+        result.status
+      ),
       output = output_file,
       location = result.line_number,
     }
