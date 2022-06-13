@@ -130,6 +130,8 @@ local function parse_json_output(data, output_file)
     local test_file = result.file_path:gsub('./spec/', '')
     local test_id = test_file .. ' ' .. result.full_description
 
+    logger.info('RSpec ID:', { test_id })
+
     tests[test_id] = {
       status = result.status == 'pending' and 'skipped' or result.status,
       short = string.upper(test_file:gsub('.rb', '')) .. '\n> ' .. result.description .. ': ' .. string.upper(
@@ -157,20 +159,24 @@ function NeotestAdapter.results(spec, result, tree)
 
   local success, data = pcall(lib.files.read, output_file)
   if not success then
-    logger.error('No test output file found ', output_file)
+    logger.error('No test output file found:', output_file)
     return {}
   end
 
   local ok, parsed_data = pcall(vim.json.decode, data, { luanil = { object = true } })
   if not ok then
-    logger.error('Failed to parse test output ', output_file)
+    logger.error('Failed to parse test output:', output_file)
     return {}
   end
 
   local ok, results = pcall(parse_json_output, parsed_data, output_file)
   if not ok then
-    logger.error('Failed to get test results ', output_file)
+    logger.error('Failed to get test results:', output_file)
     return {}
+  end
+
+  for _, value in tree:iter() do
+    logger.info('Treesitter ID:', value)
   end
 
   return results
