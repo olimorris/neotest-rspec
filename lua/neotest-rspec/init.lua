@@ -84,16 +84,25 @@ function NeotestAdapter.build_spec(args)
   if position.type == 'file' then
     table.insert(script_args, position.path)
   end
-  -- TODO: Write command for single tests to improve performance in large RSpec files
-  -- if position.type == 'test' or position.type == 'namespace' then
-  --   table.insert(
-  --     script_args,
-  --     vim.tbl_flatten({
-  --       '-e',
-  --       position.name,
-  --     })
-  --   )
-  -- end
+
+  if position.type == 'test' or position.type == 'namespace' then
+    -- Chop ' or " from start and end of the test name
+    local test_name = position.name
+    if string.sub(test_name, -1) == '"' or string.sub(test_name, -1) == "'" then
+      test_name = test_name:sub(1, -2)
+    end
+    if string.sub(test_name, 1, 1) == '"' or string.sub(test_name, 1, 1) == "'" then
+      test_name = test_name:sub(2, #test_name)
+    end
+
+    table.insert(
+      script_args,
+      vim.tbl_flatten({
+        '-e',
+        test_name
+      })
+    )
+  end
 
   local command = vim.tbl_flatten({
     runner,
@@ -108,23 +117,25 @@ function NeotestAdapter.build_spec(args)
   }
 end
 
-local function parse_json_output(data, output_file, tree)
+---@param data string
+---@param output_file string
+---@return table
+local function parse_json_output(data, output_file)
   local tests = {}
 
   for _, result in pairs(data.examples) do
-    local test_id = result.file_path:gsub('./spec/', '') .. ' ' .. result.full_description
-    local status, name = result.status, result.description
-    if not tests[test_id] then
-      tests[test_id] = {
-        status = status == 'pending' and 'skipped' or status,
-        short = test_id .. ': ' .. status,
-        output = output_file,
-        location = result.line_number,
-      }
-      if result.exception then
-        tests[test_id].short = tests[test_id].short .. '\n' .. result.exception.message
-        tests[test_id].errors = result.exception.backtrace
-      end
+    local test_file = result.file_path:gsub('./spec/', '')
+    local test_id = test_file .. ' ' .. result.full_description
+
+    tests[test_id] = {
+      status = result.status == 'pending' and 'skipped' or result.status,
+      short = string.upper(test_file:gsub('.rb', '')) .. '\n> ' .. result.description .. ': ' .. string.upper(result.status),
+      output = output_file,
+      location = result.line_number,
+    }
+    if result.exception then
+      tests[test_id].short = tests[test_id].short .. '\n' .. result.exception.message
+      tests[test_id].errors = result.exception.backtrace
     end
   end
 
@@ -151,7 +162,12 @@ function NeotestAdapter.results(spec, result, tree)
     return {}
   end
 
-  local results = parse_json_output(parsed_data, output_file, tree)
+  local ok, results = pcall(parse_json_output, parsed_data, output_file)
+  if not ok then
+    logger.error('Failed to get test results ', output_file)
+    return {}
+  end
+
   return results
 end
 
