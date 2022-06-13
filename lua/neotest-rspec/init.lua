@@ -36,7 +36,30 @@ function NeotestAdapter.discover_positions(path)
     arguments: (argument_list (_) @test.name)
   )) @test.definition
     ]]
-  return lib.treesitter.parse_positions(path, query, { nested_tests = true })
+
+  -- https://github.com/nvim-neotest/neotest/issues/9#issuecomment-1153155967
+  local content = lib.files.read(path)
+  local opts = {
+    nested_tests = true,
+    require_namespaces = true,
+    ---@param position neotest.Position The position to return an ID for
+    ---@param parents neotest.Position[] Parent positions for the position
+    position_id = function(position, namespaces)
+      return table.concat(
+        vim.tbl_flatten({
+          vim.tbl_map(function(pos)
+            return '<NS>' .. pos.name .. '<NS>'
+          end, namespaces),
+          '<TS>' .. position.name .. '<TS>',
+        }),
+        ' '
+      ):gsub(' <NS>"#', '#'):gsub("<NS>'", ''):gsub("'<NS>", ''):gsub('"<NS>', ''):gsub('<NS>"', ''):gsub(
+        "<TS>'",
+        ''
+      ):gsub("'<TS>", ''):gsub('<TS>"', ''):gsub('"<TS>', ''):gsub('<NS>', '')
+    end,
+  }
+  return lib.treesitter.parse_positions_from_string(path, content, query, opts)
 end
 
 ---@param args neotest.RunArgs
@@ -88,26 +111,19 @@ end
 local function parse_json_output(data, output_file, tree)
   local tests = {}
 
-  for _, value in tree:iter() do
-    -- Link the neotest id to the RSpec output
-    local test_id = value.id:gsub(value.path, ''):gsub('::', ' '):gsub('"', ''):gsub("'", ''):sub(2)
-
-    -- Get the test result from the parsed data
-    for _, result in pairs(data.examples) do
-      if result.full_description == test_id then
-        local status, name = result.status, result.description
-        if not tests[value.id] then
-          tests[value.id] = {
-            status = status == 'pending' and 'skipped' or status,
-            short = test_id .. ': ' .. status,
-            output = output_file,
-            location = result.line_number,
-          }
-          if result.exception then
-            tests[value.id].short = tests[value.id].short .. '\n' .. result.exception.message
-            tests[value.id].errors = result.exception.backtrace
-          end
-        end
+  for _, result in pairs(data.examples) do
+    local test_id = result.file_path:gsub('./spec/', '') .. ' ' .. result.full_description
+    local status, name = result.status, result.description
+    if not tests[test_id] then
+      tests[test_id] = {
+        status = status == 'pending' and 'skipped' or status,
+        short = test_id .. ': ' .. status,
+        output = output_file,
+        location = result.line_number,
+      }
+      if result.exception then
+        tests[test_id].short = tests[test_id].short .. '\n' .. result.exception.message
+        tests[test_id].errors = result.exception.backtrace
       end
     end
   end
@@ -135,7 +151,8 @@ function NeotestAdapter.results(spec, result, tree)
     return {}
   end
 
-  return parse_json_output(parsed_data, output_file, tree)
+  local results = parse_json_output(parsed_data, output_file, tree)
+  return results
 end
 
 setmetatable(NeotestAdapter, {
