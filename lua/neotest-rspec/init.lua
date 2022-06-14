@@ -17,7 +17,7 @@ NeotestAdapter.root = lib.files.match_root_pattern({ 'gemfile', '.rspec' })
 ---@param file_path string
 ---@return boolean
 function NeotestAdapter.is_test_file(file_path)
-  return vim.endswith(file_path, '_spec.rb') and true or false
+  return vim.endswith(file_path, '_spec.rb')
 end
 
 ---@param position_id string
@@ -80,7 +80,7 @@ end
 
 ---@param test_name string
 ---@return string
-local function remove_quotations(test_name)
+local function clean_test_name(test_name)
   if string.sub(test_name, -1) == '"' or string.sub(test_name, -1) == "'" then
     test_name = test_name:sub(1, -2)
   end
@@ -118,7 +118,7 @@ function NeotestAdapter.build_spec(args)
       script_args,
       vim.tbl_flatten({
         '-e',
-        remove_quotations(position.name),
+        clean_test_name(position.name),
       })
     )
   end
@@ -148,7 +148,7 @@ local function parse_json_output(data, output_file)
     logger.info('RSpec ID:', { test_id })
 
     tests[test_id] = {
-      status = result.status == 'pending' and 'skipped' or result.status,
+      status = result.status,
       short = string.upper(result.file_path) .. '\n> ' .. result.description .. ': ' .. string.upper(
         result.status
       ),
