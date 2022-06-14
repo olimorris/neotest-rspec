@@ -20,6 +20,25 @@ function NeotestAdapter.is_test_file(file_path)
   return vim.endswith(file_path, '_spec.rb') and true or false
 end
 
+---@param id string
+---@return string
+local function form_treesitter_id(id)
+  return id
+    :gsub("<NS>type:.-</NS> ", "")
+    :gsub(' <NS>"#', '#')
+    :gsub("<NS>'", '')
+    :gsub("'</NS>", '')
+    :gsub('"</NS>', '')
+    :gsub('<NS>"', '')
+    :gsub("<TS>'", '')
+    :gsub("'</TS>", '')
+    :gsub('<TS>"', '')
+    :gsub('"</TS>', '')
+    :gsub('<NS>', '')
+    :gsub('<NS>', '')
+    :gsub('</NS>', '')
+end
+
 ---Given a file path, parse all the tests within it.
 ---@async
 ---@param file_path string Absolute file path
@@ -44,18 +63,15 @@ function NeotestAdapter.discover_positions(path)
     ---@param position neotest.Position The position to return an ID for
     ---@param parents neotest.Position[] Parent positions for the position
     position_id = function(position, namespaces)
-      return table.concat(
+      return form_treesitter_id(table.concat(
         vim.tbl_flatten({
           vim.tbl_map(function(pos)
-            return '<NS>' .. pos.name .. '<NS>'
+            return '<NS>' .. pos.name .. '</NS>'
           end, namespaces),
-          '<TS>' .. position.name .. '<TS>',
+          '<TS>' .. position.name .. '</TS>',
         }),
         ' '
-      ):gsub(' <NS>"#', '#'):gsub("<NS>'", ''):gsub("'<NS>", ''):gsub('"<NS>', ''):gsub('<NS>"', ''):gsub(
-        "<TS>'",
-        ''
-      ):gsub("'<TS>", ''):gsub('<TS>"', ''):gsub('"<TS>', ''):gsub('<NS>', '')
+      ))
     end,
   }
   return lib.treesitter.parse_positions(path, query, opts)
