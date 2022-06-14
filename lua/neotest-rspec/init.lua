@@ -78,7 +78,7 @@ end
 ---@return neotest.RunSpec | nil
 function NeotestAdapter.build_spec(args)
   local position = args.tree:data()
-  local results_path = async.fn.tempname()
+  local results_path = 'results.json'
   local root = NeotestAdapter.root(position.path)
 
   local runner = vim.tbl_flatten({
