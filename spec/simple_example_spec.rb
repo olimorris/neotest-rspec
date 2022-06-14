@@ -1,5 +1,4 @@
-require 'rspec'
-require 'sum'
+require_relative 'sum'
 
 RSpec.describe Sum, type: :model do
   subject(:sum) { described_class.new }
