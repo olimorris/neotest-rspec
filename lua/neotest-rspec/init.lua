@@ -20,12 +20,13 @@ function NeotestAdapter.is_test_file(file_path)
   return vim.endswith(file_path, '_spec.rb') and true or false
 end
 
----@param id string
+---@param position_id string
 ---@return string
-local function form_treesitter_id(id)
-  return id
-    :gsub("<NS>type:.-</NS> ", "")
-    :gsub(' <NS>"#', '#')
+local function form_treesitter_id(position_id)
+  return position_id
+    :gsub('<NS>.-</NS> ', '', 1) -- Remove the filename from the id
+    :gsub('<NS>type:.-</NS> ', '') -- Remove any 'type: xx ' strings
+    :gsub(' <NS>"#', '#') -- Weird edge case
     :gsub("<NS>'", '')
     :gsub("'</NS>", '')
     :gsub('"</NS>', '')
@@ -142,14 +143,13 @@ local function parse_json_output(data, output_file)
   local tests = {}
 
   for _, result in pairs(data.examples) do
-    local test_file = result.file_path:gsub('./spec/', '')
-    local test_id = test_file .. ' ' .. result.full_description
+    local test_id = result.full_description
 
     logger.info('RSpec ID:', { test_id })
 
     tests[test_id] = {
       status = result.status == 'pending' and 'skipped' or result.status,
-      short = string.upper(test_file:gsub('.rb', '')) .. '\n> ' .. result.description .. ': ' .. string.upper(
+      short = string.upper(result.file_path) .. '\n> ' .. result.description .. ': ' .. string.upper(
         result.status
       ),
       output = output_file,
