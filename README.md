@@ -13,7 +13,7 @@ use({
   requires = {
     ...,
     'olimorris/neotest-rspec',
-  }
+  },
   config = function()
     require('neotest').setup({
       ...,
