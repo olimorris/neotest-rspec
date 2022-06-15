@@ -24,7 +24,7 @@ end
 ---@return string
 local function form_treesitter_id(position_id)
   return position_id
-    :gsub('<NS>.-</NS> ', '', 1) -- Remove the filename from the id
+    -- :gsub('<NS>.-</NS> ', '', 1) -- Remove the filename from the id
     :gsub('<NS>type:.-</NS> ', '') -- Remove any 'type: xx ' strings
     :gsub(' <NS>"#', '#') -- Weird edge case
     :gsub('<TS>should be_empty</TS>', 'is expected to be empty') -- RSpec's one-liner syntax
