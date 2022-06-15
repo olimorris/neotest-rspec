@@ -144,9 +144,9 @@ function NeotestAdapter.build_spec(args)
   end
 
   if position.type == 'test' then
-    if vim.bo.filetype ~= 'ruby' then
+    if vim.bo.filetype == 'neotest-summary' then
       run_by_test_name()
-    elseif vim.bo.filetype == 'neotest-summary' then
+    elseif vim.bo.filetype == 'ruby' then
       run_by_line_number()
     else
       logger.error('Could not form a command to run the tests', position.name)
