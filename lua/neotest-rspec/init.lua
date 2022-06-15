@@ -11,7 +11,7 @@ local NeotestAdapter = { name = 'neotest-rspec' }
 ---@async
 ---@param dir string @Directory to treat as cwd
 ---@return string | nil @Absolute root dir of test suite
-NeotestAdapter.root = lib.files.match_root_pattern({ 'gemfile', '.rspec' })
+NeotestAdapter.root = lib.files.match_root_pattern({ 'Gemfile', '.rspec' })
 
 ---@async
 ---@param file_path string
