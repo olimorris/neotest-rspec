@@ -1,23 +1,23 @@
-local async = require('neotest.async')
-local lib = require('neotest.lib')
-local logger = require('neotest.logging')
+local async = require("neotest.async")
+local lib = require("neotest.lib")
+local logger = require("neotest.logging")
 
 ---@class neotest.Adapter
 ---@field name string
-local NeotestAdapter = { name = 'neotest-rspec' }
+local NeotestAdapter = { name = "neotest-rspec" }
 
 ---Find the project root directory given a current directory to work from.
 ---Should no root be found, the adapter can still be used in a non-project context if a test file matches.
 ---@async
 ---@param dir string @Directory to treat as cwd
 ---@return string | nil @Absolute root dir of test suite
-NeotestAdapter.root = lib.files.match_root_pattern({ 'Gemfile', '.rspec' })
+NeotestAdapter.root = lib.files.match_root_pattern({ "Gemfile", ".rspec" })
 
 ---@async
 ---@param file_path string
 ---@return boolean
 function NeotestAdapter.is_test_file(file_path)
-  return vim.endswith(file_path, '_spec.rb')
+  return vim.endswith(file_path, "_spec.rb")
 end
 
 ---@param position_id string
@@ -25,21 +25,21 @@ end
 local function form_treesitter_id(position_id)
   return position_id
     -- :gsub('<NS>.-</NS> ', '', 1) -- Remove the filename from the id
-    :gsub('<NS>type:.-</NS> ', '') -- Remove any 'type: xx ' strings
-    :gsub(' <NS>"#', '#') -- Weird edge case
-    :gsub('<TS>should be_empty</TS>', 'is expected to be empty') -- RSpec's one-liner syntax
-    :gsub('<TS>is_expected.to be_empty</TS>', 'is expected to be empty') -- RSpec's one-liner syntax
-    :gsub("<NS>'", '')
-    :gsub("'</NS>", '')
-    :gsub('"</NS>', '')
-    :gsub('<NS>"', '')
-    :gsub("<TS>'", '')
-    :gsub("'</TS>", '')
-    :gsub('<TS>"', '')
-    :gsub('"</TS>', '')
-    :gsub('<NS>', '')
-    :gsub('<NS>', '')
-    :gsub('</NS>', '')
+    :gsub("<NS>type:.-</NS> ", "") -- Remove any 'type: xx ' strings
+    :gsub(' <NS>"#', "#") -- Weird edge case
+    :gsub("<TS>should be_empty</TS>", "is expected to be empty") -- RSpec's one-liner syntax
+    :gsub("<TS>is_expected.to be_empty</TS>", "is expected to be empty") -- RSpec's one-liner syntax
+    :gsub("<NS>'", "")
+    :gsub("'</NS>", "")
+    :gsub('"</NS>', "")
+    :gsub('<NS>"', "")
+    :gsub("<TS>'", "")
+    :gsub("'</TS>", "")
+    :gsub('<TS>"', "")
+    :gsub('"</TS>', "")
+    :gsub("<NS>", "")
+    :gsub("<NS>", "")
+    :gsub("</NS>", "")
 end
 
 ---Given a file path, parse all the tests within it.
@@ -74,11 +74,11 @@ function NeotestAdapter.discover_positions(path)
       return form_treesitter_id(table.concat(
         vim.tbl_flatten({
           vim.tbl_map(function(pos)
-            return '<NS>' .. pos.name .. '</NS>'
+            return "<NS>" .. pos.name .. "</NS>"
           end, namespaces),
-          '<TS>' .. position.name .. '</TS>',
+          "<TS>" .. position.name .. "</TS>",
         }),
-        ' '
+        " "
       ))
     end,
   }
@@ -105,18 +105,18 @@ function NeotestAdapter.build_spec(args)
   local root = NeotestAdapter.root(position.path)
 
   local runner = vim.tbl_flatten({
-    'bundle',
-    'exec',
-    'rspec',
+    "bundle",
+    "exec",
+    "rspec",
   })
   local script_args = vim.tbl_flatten({
-    '-f',
-    'json',
-    '-o',
+    "-f",
+    "json",
+    "-o",
     results_path,
   })
 
-  if position.type == 'file' then
+  if position.type == "file" then
     table.insert(script_args, position.path)
   end
 
@@ -124,7 +124,7 @@ function NeotestAdapter.build_spec(args)
     table.insert(
       script_args,
       vim.tbl_flatten({
-        '-e',
+        "-e",
         clean_test_name(position.name),
       })
     )
@@ -134,22 +134,22 @@ function NeotestAdapter.build_spec(args)
     table.insert(
       script_args,
       vim.tbl_flatten({
-        position.path .. ':' .. vim.fn.line('.'),
+        position.path .. ":" .. vim.fn.line("."),
       })
     )
   end
 
-  if position.type == 'namespace' then
+  if position.type == "namespace" then
     run_by_test_name()
   end
 
-  if position.type == 'test' then
-    if vim.bo.filetype == 'neotest-summary' then
+  if position.type == "test" then
+    if vim.bo.filetype == "neotest-summary" then
       run_by_test_name()
-    elseif vim.bo.filetype == 'ruby' then
+    elseif vim.bo.filetype == "ruby" then
       run_by_line_number()
     else
-      logger.error('Could not form a command to run the tests', position.name)
+      logger.error("Could not form a command to run the tests", position.name)
     end
   end
 
@@ -175,16 +175,16 @@ local function parse_json_output(data, output_file)
   for _, result in pairs(data.examples) do
     local test_id = result.full_description
 
-    logger.info('RSpec ID:', { test_id })
+    logger.info("RSpec ID:", { test_id })
 
     tests[test_id] = {
       status = result.status,
-      short = string.upper(result.file_path) .. '\n> ' .. result.description .. ': ' .. string.upper(result.status),
+      short = string.upper(result.file_path) .. "\n> " .. result.description .. ": " .. string.upper(result.status),
       output = output_file,
       location = result.line_number,
     }
     if result.exception then
-      tests[test_id].short = tests[test_id].short .. '\n' .. result.exception.message
+      tests[test_id].short = tests[test_id].short .. "\n" .. result.exception.message
       tests[test_id].errors = result.exception.backtrace
     end
   end
@@ -202,24 +202,24 @@ function NeotestAdapter.results(spec, result, tree)
 
   local success, data = pcall(lib.files.read, output_file)
   if not success then
-    logger.error('No test output file found:', output_file)
+    logger.error("No test output file found:", output_file)
     return {}
   end
 
   local ok, parsed_data = pcall(vim.json.decode, data, { luanil = { object = true } })
   if not ok then
-    logger.error('Failed to parse test output:', output_file)
+    logger.error("Failed to parse test output:", output_file)
     return {}
   end
 
   local ok, results = pcall(parse_json_output, parsed_data, output_file)
   if not ok then
-    logger.error('Failed to get test results:', output_file)
+    logger.error("Failed to get test results:", output_file)
     return {}
   end
 
   for _, value in tree:iter() do
-    logger.info('Treesitter ID:', value)
+    logger.info("Treesitter ID:", value)
   end
 
   return results
