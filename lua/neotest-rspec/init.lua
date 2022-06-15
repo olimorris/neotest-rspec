@@ -27,6 +27,7 @@ local function form_treesitter_id(position_id)
     :gsub('<NS>.-</NS> ', '', 1) -- Remove the filename from the id
     :gsub('<NS>type:.-</NS> ', '') -- Remove any 'type: xx ' strings
     :gsub(' <NS>"#', '#') -- Weird edge case
+    :gsub('<TS>should be_empty</TS>', 'is expected to be empty') -- RSpec's one-liner syntax
     :gsub("<NS>'", '')
     :gsub("'</NS>", '')
     :gsub('"</NS>', '')
@@ -54,6 +55,11 @@ function NeotestAdapter.discover_positions(path)
   ((call
     method: (identifier) @func_name (#eq? @func_name "it")
     arguments: (argument_list (_) @test.name)
+  )) @test.definition
+
+  ((call
+    method: (identifier) @func_name (#eq? @func_name "it")
+    block: (block (_) @test.name)
   )) @test.definition
     ]]
 
@@ -149,9 +155,7 @@ local function parse_json_output(data, output_file)
 
     tests[test_id] = {
       status = result.status,
-      short = string.upper(result.file_path) .. '\n> ' .. result.description .. ': ' .. string.upper(
-        result.status
-      ),
+      short = string.upper(result.file_path) .. '\n> ' .. result.description .. ': ' .. string.upper(result.status),
       output = output_file,
       location = result.line_number,
     }
