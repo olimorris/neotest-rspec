@@ -28,6 +28,7 @@ local function form_treesitter_id(position_id)
     :gsub('<NS>type:.-</NS> ', '') -- Remove any 'type: xx ' strings
     :gsub(' <NS>"#', '#') -- Weird edge case
     :gsub('<TS>should be_empty</TS>', 'is expected to be empty') -- RSpec's one-liner syntax
+    :gsub('<TS>is_expected.to be_empty</TS>', 'is expected to be empty') -- RSpec's one-liner syntax
     :gsub("<NS>'", '')
     :gsub("'</NS>", '')
     :gsub('"</NS>', '')
@@ -119,7 +120,7 @@ function NeotestAdapter.build_spec(args)
     table.insert(script_args, position.path)
   end
 
-  if position.type == 'test' or position.type == 'namespace' then
+  local function run_by_test_name()
     table.insert(
       script_args,
       vim.tbl_flatten({
@@ -127,6 +128,29 @@ function NeotestAdapter.build_spec(args)
         clean_test_name(position.name),
       })
     )
+  end
+
+  local function run_by_line_number()
+    table.insert(
+      script_args,
+      vim.tbl_flatten({
+        position.path .. ':' .. vim.fn.line('.'),
+      })
+    )
+  end
+
+  if position.type == 'namespace' then
+    run_by_test_name()
+  end
+
+  if position.type == 'test' then
+    if vim.bo.filetype ~= 'ruby' then
+      run_by_test_name()
+    elseif vim.bo.filetype == 'neotest-summary' then
+      run_by_line_number()
+    else
+      logger.error('Could not form a command to run the tests', position.name)
+    end
   end
 
   local command = vim.tbl_flatten({
