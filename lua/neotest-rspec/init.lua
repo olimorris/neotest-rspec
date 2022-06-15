@@ -1,6 +1,7 @@
 local async = require('neotest.async')
 local lib = require('neotest.lib')
 local logger = require('neotest.logging')
+local utils = require('neotest-rspec.utils')
 
 ---@class neotest.Adapter
 ---@field name string
@@ -23,23 +24,7 @@ end
 ---@param position_id string
 ---@return string
 local function form_treesitter_id(position_id)
-  return position_id
-    -- :gsub('<NS>.-</NS> ', '', 1) -- Remove the filename from the id
-    :gsub('<NS>type:.-</NS> ', '') -- Remove any 'type: xx ' strings
-    :gsub(' <NS>"#', '#') -- Weird edge case
-    :gsub('<TS>should be_empty</TS>', 'is expected to be empty') -- RSpec's one-liner syntax
-    :gsub('<TS>is_expected.to be_empty</TS>', 'is expected to be empty') -- RSpec's one-liner syntax
-    :gsub("<NS>'", '')
-    :gsub("'</NS>", '')
-    :gsub('"</NS>', '')
-    :gsub('<NS>"', '')
-    :gsub("<TS>'", '')
-    :gsub("'</TS>", '')
-    :gsub('<TS>"', '')
-    :gsub('"</TS>', '')
-    :gsub('<NS>', '')
-    :gsub('<NS>', '')
-    :gsub('</NS>', '')
+  return utils.form_treesitter_id(position_id)
 end
 
 ---Given a file path, parse all the tests within it.
