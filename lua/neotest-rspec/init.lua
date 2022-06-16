@@ -11,7 +11,7 @@ local NeotestAdapter = { name = "neotest-rspec" }
 ---@async
 ---@param dir string @Directory to treat as cwd
 ---@return string | nil @Absolute root dir of test suite
-NeotestAdapter.root = lib.files.match_root_pattern({ "Gemfile", ".rspec" })
+NeotestAdapter.root = lib.files.match_root_pattern("Gemfile", ".rspec")
 
 ---@async
 ---@param file_path string
@@ -114,6 +114,8 @@ function NeotestAdapter.build_spec(args)
     "json",
     "-o",
     results_path,
+    "-f",
+    "progress"
   })
 
   if position.type == "file" then
@@ -180,8 +182,7 @@ local function parse_json_output(data, output_file)
     tests[test_id] = {
       status = result.status,
       short = string.upper(result.file_path) .. "\n> " .. result.description .. ": " .. string.upper(result.status),
-      output = output_file,
-      location = result.line_number,
+      output_file = output_file,
     }
     if result.exception then
       tests[test_id].short = tests[test_id].short .. "\n" .. result.exception.message
