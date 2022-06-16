@@ -181,11 +181,15 @@ local function parse_json_output(data, output_file)
 
     tests[test_id] = {
       status = result.status,
-      short = string.upper(result.file_path) .. "\n> " .. result.description .. ": " .. string.upper(result.status),
+      short = string.upper(result.file_path) .. "\n-> " .. string.upper(result.status) .. " - " .. result.description,
       output_file = output_file,
     }
     if result.exception then
-      tests[test_id].short = tests[test_id].short .. "\n" .. result.exception.message
+      tests[test_id].short = "Failures:\n  "
+        .. result.full_description
+        .. "\n[31m  Failure/Error:\n  "
+        .. result.exception.message:gsub("\n", "\n    ")
+        .. "[0m"
       tests[test_id].errors = {
         {
           line = result.line_number,
