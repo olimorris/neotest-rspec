@@ -21,12 +21,6 @@ function NeotestAdapter.is_test_file(file_path)
   return vim.endswith(file_path, '_spec.rb')
 end
 
----@param position_id string
----@return string
-local function form_treesitter_id(position_id)
-  return utils.form_treesitter_id(position_id)
-end
-
 ---Given a file path, parse all the tests within it.
 ---@async
 ---@param file_path string Absolute file path
@@ -56,7 +50,7 @@ function NeotestAdapter.discover_positions(path)
     ---@param position neotest.Position The position to return an ID for
     ---@param parents neotest.Position[] Parent positions for the position
     position_id = function(position, namespaces)
-      return form_treesitter_id(table.concat(
+      return utils.form_treesitter_id(table.concat(
         vim.tbl_flatten({
           vim.tbl_map(function(pos)
             return '<NS>' .. pos.name .. '</NS>'
