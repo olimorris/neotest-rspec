@@ -187,7 +187,10 @@ local function parse_json_output(data, output_file)
     if result.exception then
       tests[test_id].short = tests[test_id].short .. "\n" .. result.exception.message
       tests[test_id].errors = {
-        { line = result.line_number, message = result.exception.message },
+        {
+          line = result.line_number,
+          message = result.exception.message:gsub("     ", ""):gsub("%\n+", "  "),
+        },
       }
     end
   end
