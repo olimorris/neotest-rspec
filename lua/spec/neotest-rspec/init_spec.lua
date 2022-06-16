@@ -1,3 +1,5 @@
+local async = require("plenary.async.tests")
+
 local plugin = require('neotest-rspec')
 
 describe('is_test_file', function()
@@ -11,7 +13,10 @@ describe('is_test_file', function()
 end)
 
 describe('discover_positions', function()
-  it('matches rspec files', function()
-    assert.equals('something', plugin.discover_positions('./spec/nested_tests/nested_spec.rb'))
+  async.it('creates a meaningful tree of ids', function()
+    local positions = plugin.discover_positions('./spec/nested/basic_spec.rb')
+
+    assert.equals('basic_spec.rb', positions._data.name)
+    assert.equals('Maths', positions._nodes.Maths._data.id)
   end)
 end)
