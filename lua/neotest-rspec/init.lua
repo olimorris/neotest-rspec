@@ -24,22 +24,22 @@ end
 ---@return string
 local function form_treesitter_id(position_id)
   return position_id
-    -- :gsub('<NS>.-</NS> ', '', 1) -- Remove the filename from the id
-    :gsub("<NS>type:.-</NS> ", "") -- Remove any 'type: xx ' strings
-    :gsub(' <NS>"#', "#") -- Weird edge case
-    :gsub("<TS>should be_empty</TS>", "is expected to be empty") -- RSpec's one-liner syntax
-    :gsub("<TS>is_expected.to be_empty</TS>", "is expected to be empty") -- RSpec's one-liner syntax
-    :gsub("<NS>'", "")
-    :gsub("'</NS>", "")
-    :gsub('"</NS>', "")
-    :gsub('<NS>"', "")
-    :gsub("<TS>'", "")
-    :gsub("'</TS>", "")
-    :gsub('<TS>"', "")
-    :gsub('"</TS>', "")
-    :gsub("<NS>", "")
-    :gsub("<NS>", "")
-    :gsub("</NS>", "")
+    -- :gsub('<Namespace>.-</Namespace> ', '', 1) -- Remove the filename from the id
+    :gsub("<Namespace>type:.-</Namespace> ", "") -- Remove any 'type: xx ' strings
+    :gsub(' <Namespace>"#', "#") -- Weird edge case
+    :gsub("<Test>should be_empty</Test>", "is expected to be empty") -- RSpec's one-liner syntax
+    :gsub("<Test>is_expected.to be_empty</Test>", "is expected to be empty") -- RSpec's one-liner syntax
+    :gsub("<Namespace>'", "")
+    :gsub("'</Namespace>", "")
+    :gsub('"</Namespace>', "")
+    :gsub('<Namespace>"', "")
+    :gsub("<Test>'", "")
+    :gsub("'</Test>", "")
+    :gsub('<Test>"', "")
+    :gsub('"</Test>', "")
+    :gsub("<Namespace>", "")
+    :gsub("<Namespace>", "")
+    :gsub("</Namespace>", "")
 end
 
 ---Given a file path, parse all the tests within it.
@@ -64,19 +64,16 @@ function NeotestAdapter.discover_positions(path)
   )) @test.definition
     ]]
 
-  -- https://github.com/nvim-neotest/neotest/issues/9#issuecomment-1153155967
   local opts = {
     nested_tests = true,
     require_namespaces = true,
-    ---@param position neotest.Position The position to return an ID for
-    ---@param parents neotest.Position[] Parent positions for the position
     position_id = function(position, namespaces)
       return form_treesitter_id(table.concat(
         vim.tbl_flatten({
           vim.tbl_map(function(pos)
-            return "<NS>" .. pos.name .. "</NS>"
+            return "<Namespace>" .. pos.name .. "</Namespace>"
           end, namespaces),
-          "<TS>" .. position.name .. "</TS>",
+          "<Test>" .. position.name .. "</Test>",
         }),
         " "
       ))
