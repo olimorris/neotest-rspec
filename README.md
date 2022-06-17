@@ -32,7 +32,7 @@ _NOTE_: All usages of `require('neotest').run.run` can be mapped to a command in
 
 #### Test single function
 
-To test a single test hover over the test and run `require('neotest').run.run()`
+To test a single test, hover over the test and run `require('neotest').run.run()`
 
 #### Test file
 
