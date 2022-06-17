@@ -181,11 +181,12 @@ local function parse_json_output(data, output_file)
       short = string.upper(result.file_path) .. "\n-> " .. string.upper(result.status) .. " - " .. result.description,
       output_file = output_file,
     }
+
     if result.exception then
-      tests[test_id].short = "Failures:\n  "
-        .. result.full_description
-        .. "\n[31m  Failure/Error:\n  "
-        .. result.exception.message:gsub("\n", "\n    ")
+      tests[test_id].short = "Failures:\n\n"
+        .. "  1) " .. result.full_description
+        .. "\n   [31m  Failure/Error:\n"
+        .. result.exception.message:gsub("\n", "\n\t")
         .. "[0m"
       tests[test_id].errors = {
         {
@@ -225,6 +226,7 @@ function NeotestAdapter.results(spec, result, tree)
     return {}
   end
 
+  -- Make debugging test failures easier
   for _, value in tree:iter() do
     logger.info("Treesitter ID:", value)
   end
