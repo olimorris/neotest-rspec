@@ -12,7 +12,7 @@ describe("form_treesitter_id", function()
 end)
 
 describe("parse_json_output", function()
-  it("extracts ", function()
+  it("extracts summary info from a passed rspec example", function()
     local parsed_rspec_json = {
       examples = {{
         id = "/spec/basic_spec.rb[1:1]",

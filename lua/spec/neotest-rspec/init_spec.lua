@@ -12,7 +12,7 @@ describe("is_test_file", function()
 end)
 
 describe('discover_positions', function()
-  async.it("provides meaningful ids from a basic spec", function()
+  async.it("provides meaningful names from a basic spec", function()
     local positions = plugin.discover_positions("./spec/nested/basic_spec.rb"):to_list()
 
     local expected_output  = {
