@@ -5,7 +5,7 @@ describe("form_treesitter_id", function()
     assert.equals(
       "Array when first created",
       utils.form_treesitter_id(
-        "<NS>Array</NS> <TS>'when first created'</TS>"
+        "<Namespace>Array</Namespace> <Test>'when first created'</Test>"
       )
     )
   end)

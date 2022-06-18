@@ -1,5 +1,4 @@
 local async = require("plenary.async.tests")
-
 local plugin = require("neotest-rspec")
 
 describe("is_test_file", function()
@@ -13,10 +12,33 @@ describe("is_test_file", function()
 end)
 
 describe('discover_positions', function()
-  async.it("creates a meaningful tree of ids", function()
-    local positions = plugin.discover_positions("./spec/nested/basic_spec.rb")
+  async.it("provides meaningful ids from a basic spec", function()
+    local positions = plugin.discover_positions("./spec/nested/basic_spec.rb"):to_list()
 
-    assert.equals("basic_spec.rb", positions._data.name)
-    assert.equals("Maths", positions._nodes.Maths._data.id)
+    local expected_output  = {
+      {
+        name = "basic_spec.rb",
+        type = "file",
+      },
+      {
+        {
+          name = "'Maths'",
+          type = "namespace",
+        },
+        {
+          {
+            name = "'adds two numbers together'",
+            type = "test",
+          }
+        }
+      }
+    }
+
+    assert.equals(expected_output[1].name, positions[1].name)
+    assert.equals(expected_output[1].type, positions[1].type)
+    assert.equals(expected_output[2][1].name, positions[2][1].name)
+    assert.equals(expected_output[2][1].type, positions[2][1].type)
+    assert.equals(expected_output[2][2][1].name, positions[2][2][1].name)
+    assert.equals(expected_output[2][2][1].type, positions[2][2][1].type)
   end)
 end)
