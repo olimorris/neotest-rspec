@@ -144,40 +144,6 @@ function NeotestAdapter.build_spec(args)
   }
 end
 
----@param data string
----@param output_file string
----@return table
-local function parse_json_output(data, output_file)
-  local tests = {}
-
-  for _, result in pairs(data.examples) do
-    local test_id = result.full_description
-
-    logger.info("RSpec ID:", { test_id })
-
-    tests[test_id] = {
-      status = result.status,
-      short = string.upper(result.file_path) .. "\n-> " .. string.upper(result.status) .. " - " .. result.description,
-      output_file = output_file,
-    }
-
-    if result.exception then
-      tests[test_id].short = "Failures:\n\n"
-        .. "  1) " .. result.full_description
-        .. "\n   [31m  Failure/Error:\n"
-        .. result.exception.message:gsub("\n", "\n\t")
-        .. "[0m"
-      tests[test_id].errors = {
-        {
-          line = result.line_number,
-          message = result.exception.message:gsub("     ", ""):gsub("%\n+", "  "),
-        },
-      }
-    end
-  end
-
-  return tests
-end
 
 ---@async
 ---@param spec neotest.RunSpec
@@ -199,7 +165,7 @@ function NeotestAdapter.results(spec, result, tree)
     return {}
   end
 
-  local ok, results = pcall(parse_json_output, parsed_data, output_file)
+  local ok, results = pcall(utils.parse_json_output, parsed_data, output_file)
   if not ok then
     logger.error("Failed to get test results:", output_file)
     return {}
