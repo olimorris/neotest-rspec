@@ -16,4 +16,5 @@ set noswapfile
 set noundofile
 
 runtime plugin/plenary.vim
+execute("TSInstall ruby")
 command Test PlenaryBustedDirectory lua/spec/neotest-rspec {minimal_init = 'lua/spec/minimal.vim'}
