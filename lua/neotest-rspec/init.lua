@@ -1,6 +1,7 @@
 local async = require("neotest.async")
 local lib = require("neotest.lib")
 local logger = require("neotest.logging")
+local utils = require("neotest-rspec.utils")
 
 ---@class neotest.Adapter
 ---@field name string
@@ -18,28 +19,6 @@ NeotestAdapter.root = lib.files.match_root_pattern("Gemfile", ".rspec")
 ---@return boolean
 function NeotestAdapter.is_test_file(file_path)
   return vim.endswith(file_path, "_spec.rb")
-end
-
----@param position_id string
----@return string
-local function form_treesitter_id(position_id)
-  return position_id
-    -- :gsub('<Namespace>.-</Namespace> ', '', 1) -- Remove the filename from the id
-    :gsub("<Namespace>type:.-</Namespace> ", "") -- Remove any 'type: xx ' strings
-    :gsub(' <Namespace>"#', "#") -- Weird edge case
-    :gsub("<Test>should be_empty</Test>", "is expected to be empty") -- RSpec's one-liner syntax
-    :gsub("<Test>is_expected.to be_empty</Test>", "is expected to be empty") -- RSpec's one-liner syntax
-    :gsub("<Namespace>'", "")
-    :gsub("'</Namespace>", "")
-    :gsub('"</Namespace>', "")
-    :gsub('<Namespace>"', "")
-    :gsub("<Test>'", "")
-    :gsub("'</Test>", "")
-    :gsub('<Test>"', "")
-    :gsub('"</Test>', "")
-    :gsub("<Namespace>", "")
-    :gsub("<Namespace>", "")
-    :gsub("</Namespace>", "")
 end
 
 ---Given a file path, parse all the tests within it.
@@ -68,7 +47,7 @@ function NeotestAdapter.discover_positions(path)
     nested_tests = true,
     require_namespaces = true,
     position_id = function(position, namespaces)
-      return form_treesitter_id(table.concat(
+      return utils.form_treesitter_id(table.concat(
         vim.tbl_flatten({
           vim.tbl_map(function(pos)
             return "<Namespace>" .. pos.name .. "</Namespace>"
@@ -165,40 +144,6 @@ function NeotestAdapter.build_spec(args)
   }
 end
 
----@param data string
----@param output_file string
----@return table
-local function parse_json_output(data, output_file)
-  local tests = {}
-
-  for _, result in pairs(data.examples) do
-    local test_id = result.full_description
-
-    logger.info("RSpec ID:", { test_id })
-
-    tests[test_id] = {
-      status = result.status,
-      short = string.upper(result.file_path) .. "\n-> " .. string.upper(result.status) .. " - " .. result.description,
-      output_file = output_file,
-    }
-
-    if result.exception then
-      tests[test_id].short = "Failures:\n\n"
-        .. "  1) " .. result.full_description
-        .. "\n   [31m  Failure/Error:\n"
-        .. result.exception.message:gsub("\n", "\n\t")
-        .. "[0m"
-      tests[test_id].errors = {
-        {
-          line = result.line_number,
-          message = result.exception.message:gsub("     ", ""):gsub("%\n+", "  "),
-        },
-      }
-    end
-  end
-
-  return tests
-end
 
 ---@async
 ---@param spec neotest.RunSpec
@@ -220,7 +165,7 @@ function NeotestAdapter.results(spec, result, tree)
     return {}
   end
 
-  local ok, results = pcall(parse_json_output, parsed_data, output_file)
+  local ok, results = pcall(utils.parse_json_output, parsed_data, output_file)
   if not ok then
     logger.error("Failed to get test results:", output_file)
     return {}
