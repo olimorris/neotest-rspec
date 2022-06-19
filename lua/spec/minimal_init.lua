@@ -1,1 +1,0 @@
-vim.opt.rtp:append('.')
