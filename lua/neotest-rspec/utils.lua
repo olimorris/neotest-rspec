@@ -1,11 +1,17 @@
 local logger = require("neotest.logging")
 
 local M = {}
+--
+---@param position neotest.Position The position to return an ID for
+---@param namespaces neotest.Position[] Any namespaces the position is within
+M.generate_treesitter_id = function(position, namespace)
+  return table.concat(vim.tbl_flatten({ position.path, position.range[1] }), "::")
+end
 
 ---@param position_id string
 ---@return string
 M.form_treesitter_id = function(position_id)
-  local treesitter_id = position_id
+  return position_id
     :gsub("<Namespace>type:.-</Namespace> ", "") -- Remove any 'type: xx ' strings
     :gsub(' <Namespace>"#', "#") -- Weird edge case
     :gsub("<Test>should be_empty</Test>", "is expected to be empty") -- RSpec's one-liner syntax
@@ -21,10 +27,6 @@ M.form_treesitter_id = function(position_id)
     :gsub("<Namespace>", "")
     :gsub("<Namespace>", "")
     :gsub("</Namespace>", "")
-
-  logger.info("Treesitter ID:", treesitter_id)
-
-  return treesitter_id
 end
 
 ---@param parsed_rspec_json table
@@ -33,8 +35,8 @@ end
 M.parse_json_output = function(parsed_rspec_json, output_file)
   local tests = {}
 
-  for _, result in pairs(parsed_rspec_json.examples) do
-    local test_id = result.full_description
+  for _, result in pairs(parsed_rspec_json.tests) do
+    local test_id = result.treesitter_id
 
     logger.info("RSpec ID:", { test_id })
 

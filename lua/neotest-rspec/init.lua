@@ -12,7 +12,7 @@ local NeotestAdapter = { name = "neotest-rspec" }
 ---@async
 ---@param dir string @Directory to treat as cwd
 ---@return string | nil @Absolute root dir of test suite
-NeotestAdapter.root = lib.files.match_root_pattern("Gemfile", ".rspec")
+NeotestAdapter.root = lib.files.match_root_pattern("Gemfile", ".rspec", ".gitignore")
 
 ---@async
 ---@param file_path string
@@ -43,22 +43,11 @@ function NeotestAdapter.discover_positions(path)
     )) @test.definition
   ]]
 
-  local opts = {
+  return lib.treesitter.parse_positions(path, query, {
     nested_tests = true,
     require_namespaces = true,
-    position_id = function(position, namespaces)
-      return utils.form_treesitter_id(table.concat(
-        vim.tbl_flatten({
-          vim.tbl_map(function(pos)
-            return "<Namespace>" .. pos.name .. "</Namespace>"
-          end, namespaces),
-          "<Test>" .. position.name .. "</Test>",
-        }),
-        " "
-      ))
-    end,
-  }
-  return lib.treesitter.parse_positions(path, query, opts)
+    position_id = utils.generate_treesitter_id,
+  })
 end
 
 ---@param test_name string
@@ -86,8 +75,10 @@ function NeotestAdapter.build_spec(args)
     "rspec",
   })
   local script_args = vim.tbl_flatten({
+    "--require",
+    "./lib/neovim_formatter.rb",
     "-f",
-    "json",
+    "NeovimFormatter",
     "-o",
     results_path,
     "-f",
@@ -168,6 +159,11 @@ function NeotestAdapter.results(spec, result, tree)
   if not ok then
     logger.error("Failed to get test results:", output_file)
     return {}
+  end
+
+  -- Make debugging test failures easier
+  for _, value in tree:iter() do
+    logger.info("Treesitter ID:", value)
   end
 
   return results
