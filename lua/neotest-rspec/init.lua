@@ -75,10 +75,8 @@ function NeotestAdapter.build_spec(args)
     "rspec",
   })
   local script_args = vim.tbl_flatten({
-    "--require",
-    "./lib/neovim_formatter.rb",
     "-f",
-    "NeovimFormatter",
+    "RspecNeovimFormatter",
     "-o",
     results_path,
     "-f",

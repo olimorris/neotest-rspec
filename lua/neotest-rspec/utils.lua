@@ -6,7 +6,9 @@ local M = {}
 ---@param namespaces neotest.Position[] Any namespaces the position is within
 ---@return string
 M.generate_treesitter_id = function(position, namespace)
-  return table.concat(vim.tbl_flatten({ position.path, position.range[1] }), "::")
+  local id = table.concat(vim.tbl_flatten({ position.path, position.range[1] }), "::")
+  logger.info("Treesitter id:", id)
+  return id
 end
 
 ---@param parsed_rspec_json table

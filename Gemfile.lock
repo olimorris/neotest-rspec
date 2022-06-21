@@ -15,6 +15,8 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.11.0)
     rspec-support (3.11.0)
+    rspec_neovim_formatter (0.1.0)
+      rspec-core (>= 2, < 4, != 2.12.0)
 
 PLATFORMS
   arm64-darwin-21
@@ -22,6 +24,7 @@ PLATFORMS
 
 DEPENDENCIES
   rspec
+  rspec_neovim_formatter
 
 BUNDLED WITH
    2.3.14

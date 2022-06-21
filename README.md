@@ -4,11 +4,17 @@
 
 This plugin provides an [RSpec](https://rspec.info) adapter for the [Neotest](https://github.com/nvim-neotest/neotest) framework.
 
+> Note: It requires a seperate [Gem](https://github.com/olimorris/rspec_neovim_formatter) to work!
+
 <img width="1502" alt="Neotest and RSPec" src="https://user-images.githubusercontent.com/9512444/174159395-d4dc5e1e-9c3c-449f-b235-6fc8835fed5b.png">
 
 ## Installation
 
-Using packer:
+Firstly, add the gem to your `Gemfile` as per the [installation](https://github.com/olimorris/rspec_neovim_formatter#install) instructions.
+
+> Note: This allows for Neotest to match results, via Treesitter, with RSpec output.
+
+Then install the plugin using packer:
 
 ```lua
 use({
