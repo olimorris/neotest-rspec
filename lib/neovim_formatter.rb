@@ -42,7 +42,7 @@ class NeovimFormatter
   def format_test(test)
     {
       rspec_id: test.id,
-      treesitter_id: test.metadata[:absolute_file_path].to_s + '::' + (test.metadata[:line_number] - 1).to_s,
+      treesitter_id: "#{test.metadata[:absolute_file_path]}::#{test.metadata[:line_number] - 1}",
       # group: test.example_group,
       description: test.description,
       full_description: test.full_description,
