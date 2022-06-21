@@ -27,21 +27,21 @@ end
 ---@return neotest.Tree | nil
 function NeotestAdapter.discover_positions(path)
   local query = [[
-  ((call
-      method: (identifier) @func_name (#match? @func_name "^(describe|context)$")
-      arguments: (argument_list (_) @namespace.name)
-  )) @namespace.definition
+    ((call
+        method: (identifier) @func_name (#match? @func_name "^(describe|context)$")
+        arguments: (argument_list (_) @namespace.name)
+    )) @namespace.definition
 
-  ((call
-    method: (identifier) @func_name (#eq? @func_name "it")
-    arguments: (argument_list (_) @test.name)
-  )) @test.definition
+    ((call
+      method: (identifier) @func_name (#eq? @func_name "it")
+      arguments: (argument_list (_) @test.name)
+    )) @test.definition
 
-  ((call
-    method: (identifier) @func_name (#eq? @func_name "it")
-    block: (block (_) @test.name)
-  )) @test.definition
-    ]]
+    ((call
+      method: (identifier) @func_name (#eq? @func_name "it")
+      block: (block (_) @test.name)
+    )) @test.definition
+  ]]
 
   local opts = {
     nested_tests = true,
@@ -144,7 +144,6 @@ function NeotestAdapter.build_spec(args)
   }
 end
 
-
 ---@async
 ---@param spec neotest.RunSpec
 ---@param result neotest.StrategyResult
@@ -169,11 +168,6 @@ function NeotestAdapter.results(spec, result, tree)
   if not ok then
     logger.error("Failed to get test results:", output_file)
     return {}
-  end
-
-  -- Make debugging test failures easier
-  for _, value in tree:iter() do
-    logger.info("Treesitter ID:", value)
   end
 
   return results
