@@ -17,7 +17,7 @@ end
 ---@param position neotest.Position The position to return an ID for
 ---@param namespace neotest.Position[] Any namespaces the position is within
 ---@return string
-M.generate_treesitter_id = function(position, namespace)
+M.generate_treesitter_id = function(position)
   local test_path = "." .. replace_paths(position.path, vim.loop.cwd(), "")
   local id = test_path .. "::" .. position.range[1]
 
