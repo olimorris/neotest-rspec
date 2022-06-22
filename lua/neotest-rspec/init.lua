@@ -76,7 +76,7 @@ function NeotestAdapter.build_spec(args)
   })
   local script_args = vim.tbl_flatten({
     "-f",
-    "RspecNeovimFormatter",
+    "json",
     "-o",
     results_path,
     "-f",
