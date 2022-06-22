@@ -1,6 +1,7 @@
 local logger = require("neotest.logging")
 
 local M = {}
+local separator = "::"
 
 --- Replace paths in a string
 ---@param str string
@@ -18,10 +19,13 @@ end
 ---@param namespace neotest.Position[] Any namespaces the position is within
 ---@return string
 M.generate_treesitter_id = function(position)
-  local test_path = "." .. replace_paths(position.path, vim.loop.cwd(), "")
-  local id = test_path .. "::" .. position.range[1]
+  local cwd = vim.loop.cwd()
+  local test_path = "." .. replace_paths(position.path, cwd, "")
+  local id = test_path .. separator .. position.range[1]
 
-  logger.info("Treesitter id:", id)
+  logger.info("Cwd:", { cwd })
+  logger.info("Path to test file:", { position.path })
+  logger.info("Treesitter id:", { id })
 
   return id
 end
@@ -34,7 +38,7 @@ M.parse_json_output = function(parsed_rspec_json, output_file)
 
   for _, result in pairs(parsed_rspec_json.examples) do
     -- Treesitter starts line numbers from 0 so we subtract 1
-    local test_id = result.file_path .. "::" .. (result.line_number - 1)
+    local test_id = result.file_path .. separator .. (result.line_number - 1)
 
     logger.info("RSpec ID:", { test_id })
 

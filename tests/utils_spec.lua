@@ -1,7 +1,7 @@
 local utils = require("neotest-rspec.utils")
 
-describe("form_treesitter_id", function()
-  it("removes tags and quotes", function()
+describe("generate_treesitter_id", function()
+  it("forms an id", function()
     local ts = {
       name = "'adds two numbers together'",
       path = vim.loop.cwd() .. "/spec/basic_spec.rb",

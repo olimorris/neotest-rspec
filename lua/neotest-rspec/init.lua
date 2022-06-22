@@ -159,11 +159,6 @@ function NeotestAdapter.results(spec, result, tree)
     return {}
   end
 
-  -- Make debugging test failures easier
-  for _, value in tree:iter() do
-    logger.info("Treesitter ID:", value)
-  end
-
   return results
 end
 
