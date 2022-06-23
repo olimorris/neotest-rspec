@@ -1,3 +1,4 @@
+local async = require("neotest.async")
 local logger = require("neotest.logging")
 
 local M = {}
@@ -19,7 +20,7 @@ end
 ---@param namespace neotest.Position[] Any namespaces the position is within
 ---@return string
 M.generate_treesitter_id = function(position)
-  local cwd = vim.loop.cwd()
+  local cwd = async.fn.getcwd()
   local test_path = "." .. replace_paths(position.path, cwd, "")
   local id = test_path .. separator .. position.range[1]
 
