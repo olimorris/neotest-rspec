@@ -12,7 +12,7 @@ local NeotestAdapter = { name = "neotest-rspec" }
 ---@async
 ---@param dir string @Directory to treat as cwd
 ---@return string | nil @Absolute root dir of test suite
-NeotestAdapter.root = lib.files.match_root_pattern("Gemfile", ".rspec")
+NeotestAdapter.root = lib.files.match_root_pattern("Gemfile", ".rspec", ".gitignore")
 
 ---@async
 ---@param file_path string
@@ -27,38 +27,27 @@ end
 ---@return neotest.Tree | nil
 function NeotestAdapter.discover_positions(path)
   local query = [[
-  ((call
-      method: (identifier) @func_name (#match? @func_name "^(describe|context)$")
-      arguments: (argument_list (_) @namespace.name)
-  )) @namespace.definition
+    ((call
+        method: (identifier) @func_name (#match? @func_name "^(describe|context)$")
+        arguments: (argument_list (_) @namespace.name)
+    )) @namespace.definition
 
-  ((call
-    method: (identifier) @func_name (#eq? @func_name "it")
-    arguments: (argument_list (_) @test.name)
-  )) @test.definition
+    ((call
+      method: (identifier) @func_name (#eq? @func_name "it")
+      arguments: (argument_list (_) @test.name)
+    )) @test.definition
 
-  ((call
-    method: (identifier) @func_name (#eq? @func_name "it")
-    block: (block (_) @test.name)
-  )) @test.definition
-    ]]
+    ((call
+      method: (identifier) @func_name (#eq? @func_name "it")
+      block: (block (_) @test.name)
+    )) @test.definition
+  ]]
 
-  local opts = {
+  return lib.treesitter.parse_positions(path, query, {
     nested_tests = true,
     require_namespaces = true,
-    position_id = function(position, namespaces)
-      return utils.form_treesitter_id(table.concat(
-        vim.tbl_flatten({
-          vim.tbl_map(function(pos)
-            return "<Namespace>" .. pos.name .. "</Namespace>"
-          end, namespaces),
-          "<Test>" .. position.name .. "</Test>",
-        }),
-        " "
-      ))
-    end,
-  }
-  return lib.treesitter.parse_positions(path, query, opts)
+    position_id = utils.generate_treesitter_id,
+  })
 end
 
 ---@param test_name string
@@ -144,7 +133,6 @@ function NeotestAdapter.build_spec(args)
   }
 end
 
-
 ---@async
 ---@param spec neotest.RunSpec
 ---@param result neotest.StrategyResult
@@ -169,11 +157,6 @@ function NeotestAdapter.results(spec, result, tree)
   if not ok then
     logger.error("Failed to get test results:", output_file)
     return {}
-  end
-
-  -- Make debugging test failures easier
-  for _, value in tree:iter() do
-    logger.info("Treesitter ID:", value)
   end
 
   return results

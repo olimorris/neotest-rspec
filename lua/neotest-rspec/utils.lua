@@ -1,27 +1,33 @@
 local logger = require("neotest.logging")
 
-local M = {};
+local M = {}
+local separator = "::"
 
----@param position_id string
+--- Replace paths in a string
+---@param str string
+---@param what string
+---@param with string
 ---@return string
-M.form_treesitter_id = function(position_id)
-  return position_id
-    -- :gsub('<Namespace>.-</Namespace> ', '', 1) -- Remove the filename from the id
-    :gsub("<Namespace>type:.-</Namespace> ", "") -- Remove any 'type: xx ' strings
-    :gsub(' <Namespace>"#', "#") -- Weird edge case
-    :gsub("<Test>should be_empty</Test>", "is expected to be empty") -- RSpec's one-liner syntax
-    :gsub("<Test>is_expected.to be_empty</Test>", "is expected to be empty") -- RSpec's one-liner syntax
-    :gsub("<Namespace>'", "")
-    :gsub("'</Namespace>", "")
-    :gsub('"</Namespace>', "")
-    :gsub('<Namespace>"', "")
-    :gsub("<Test>'", "")
-    :gsub("'</Test>", "")
-    :gsub('<Test>"', "")
-    :gsub('"</Test>', "")
-    :gsub("<Namespace>", "")
-    :gsub("<Namespace>", "")
-    :gsub("</Namespace>", "")
+local function replace_paths(str, what, with)
+  -- Taken from: https://stackoverflow.com/a/29379912/3250992
+  what = string.gsub(what, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1") -- escape pattern
+  with = string.gsub(with, "[%%]", "%%%%") -- escape replacement
+  return string.gsub(str, what, with)
+end
+
+---@param position neotest.Position The position to return an ID for
+---@param namespace neotest.Position[] Any namespaces the position is within
+---@return string
+M.generate_treesitter_id = function(position)
+  local cwd = vim.loop.cwd()
+  local test_path = "." .. replace_paths(position.path, cwd, "")
+  local id = test_path .. separator .. position.range[1]
+
+  logger.info("Cwd:", { cwd })
+  logger.info("Path to test file:", { position.path })
+  logger.info("Treesitter id:", { id })
+
+  return id
 end
 
 ---@param parsed_rspec_json table
@@ -31,7 +37,8 @@ M.parse_json_output = function(parsed_rspec_json, output_file)
   local tests = {}
 
   for _, result in pairs(parsed_rspec_json.examples) do
-    local test_id = result.full_description
+    -- Treesitter starts line numbers from 0 so we subtract 1
+    local test_id = result.file_path .. separator .. (result.line_number - 1)
 
     logger.info("RSpec ID:", { test_id })
 
@@ -43,7 +50,8 @@ M.parse_json_output = function(parsed_rspec_json, output_file)
 
     if result.exception then
       tests[test_id].short = "Failures:\n\n"
-        .. "  1) " .. result.full_description
+        .. "  1) "
+        .. result.full_description
         .. "\n   [31m  Failure/Error:\n"
         .. result.exception.message:gsub("\n", "\n\t")
         .. "[0m"
@@ -59,4 +67,4 @@ M.parse_json_output = function(parsed_rspec_json, output_file)
   return tests
 end
 
-return M;
+return M

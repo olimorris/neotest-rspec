@@ -8,7 +8,7 @@ This plugin provides an [RSpec](https://rspec.info) adapter for the [Neotest](ht
 
 ## Installation
 
-Using packer:
+Install the plugin using packer:
 
 ```lua
 use({
