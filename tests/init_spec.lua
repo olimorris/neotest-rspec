@@ -22,7 +22,7 @@ describe('discover_positions', function()
       },
       {
         {
-          name = "'Maths'",
+          name = "Nested::Foo",
           type = "namespace",
         },
         {
