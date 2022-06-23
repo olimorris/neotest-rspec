@@ -8,7 +8,7 @@ module Nested
   end
 end
 
-describe Nested::Foo  do
+describe Nested::Foo do
   it 'adds two numbers together' do
     expect(2 + 2).to eq(4)
   end
