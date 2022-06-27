@@ -6,7 +6,7 @@ This plugin provides an [RSpec](https://rspec.info) adapter for the [Neotest](ht
 
 <img width="1502" alt="Neotest and RSPec" src="https://user-images.githubusercontent.com/9512444/174159395-d4dc5e1e-9c3c-449f-b235-6fc8835fed5b.png">
 
-## Installation
+## :package: Installation
 
 Install the plugin using packer:
 
@@ -28,7 +28,7 @@ use({
 })
 ```
 
-## Usage
+## :rocket: Usage
 
 _NOTE_: All usages of `require('neotest').run.run` can be mapped to a command in your config (this is not included and should be done by yourself).
 
@@ -49,12 +49,21 @@ To test a directory run `require('neotest').run.run("path/to/directory")`
 To test the full test suite run `require('neotest').run.run("path/to/root_project")`
 e.g. `require('neotest').run.run(vim.fn.getcwd())`, presuming that vim's directory is the same as the project root.
 
-## Contributing
+## :gift: Contributing
 
-This project is maintained by the nvim ruby community. Please raise a PR if you are interested in adding new functionality or fixing any bugs. If you are unsure of how this plugin works please read the [writing adapters](https://github.com/nvim-neotest/neotest#writing-adapters) section of the Neotest README.
+This project is maintained by the Neovim Ruby community. Please raise a PR if you are interested in adding new functionality or fixing any bugs. When submitting a bug, please include an example spec that can be tested.
 
-If you are new to `lua` please follow any of the following resources:
+To trigger the tests for the adapter, run:
 
-- https://learnxinyminutes.com/docs/lua/
-- https://www.lua.org/manual/5.1/
-- https://github.com/nanotee/nvim-lua-guide
+```sh
+./scripts/test
+```
+
+## :clap: Thanks
+A special thanks to the following contributers:
+
+- [Shanon McQuay](https://github.com/compactcode)
+- [Brendan Mulholland](https://github.com/bmulholland)
+- [Hussein Al Abry](https://github.com/zidhuss)
+- [Paul Danelli](https://github.com/prdanelli)
+- [Mr Ivanov](https://github.com/alxekb)
