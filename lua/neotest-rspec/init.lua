@@ -28,8 +28,8 @@ end
 function NeotestAdapter.discover_positions(path)
   local query = [[
     ((call
-        method: (identifier) @func_name (#match? @func_name "^(describe|context)$")
-        arguments: (argument_list (_) @namespace.name)
+      method: (identifier) @func_name (#match? @func_name "^(describe|context)$")
+      arguments: (argument_list (_) @namespace.name)
     )) @namespace.definition
 
     ((call
@@ -67,7 +67,6 @@ end
 function NeotestAdapter.build_spec(args)
   local position = args.tree:data()
   local results_path = async.fn.tempname()
-  local root = NeotestAdapter.root(position.path)
 
   local runner = vim.tbl_flatten({
     "bundle",
@@ -141,8 +140,8 @@ end
 function NeotestAdapter.results(spec, result, tree)
   local output_file = spec.context.results_path
 
-  local success, data = pcall(lib.files.read, output_file)
-  if not success then
+  local ok, data = pcall(lib.files.read, output_file)
+  if not ok then
     logger.error("No test output file found:", output_file)
     return {}
   end
