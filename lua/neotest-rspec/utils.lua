@@ -22,7 +22,8 @@ end
 M.generate_treesitter_id = function(position)
   local cwd = async.fn.getcwd()
   local test_path = "." .. replace_paths(position.path, cwd, "")
-  local id = test_path .. separator .. position.range[1]
+  -- Treesitter starts line numbers from 0 so we subtract 1
+  local id = test_path .. separator .. (tonumber(position.range[1]) + 1)
 
   logger.info("Cwd:", { cwd })
   logger.info("Path to test file:", { position.path })
@@ -38,8 +39,7 @@ M.parse_json_output = function(parsed_rspec_json, output_file)
   local tests = {}
 
   for _, result in pairs(parsed_rspec_json.examples) do
-    -- Treesitter starts line numbers from 0 so we subtract 1
-    local test_id = result.file_path .. separator .. (result.line_number - 1)
+    local test_id = result.file_path .. separator .. result.line_number
 
     logger.info("RSpec ID:", { test_id })
 

@@ -15,7 +15,7 @@ describe("generate_treesitter_id", function()
     }
 
     assert.equals(
-      "./spec/basic_spec.rb::1",
+      "./spec/basic_spec.rb::2",
       utils.generate_treesitter_id(ts)
     )
   end)
@@ -38,7 +38,7 @@ describe("parse_json_output", function()
     }
 
     local expected_output = {
-      ["./spec/basic_spec.rb::1"] = {
+      ["./spec/basic_spec.rb::2"] = {
         output_file = "/tmp/nvimhYaIPj/3",
         short = "./SPEC/BASIC_SPEC.RB\n-> PASSED - adds two numbers together",
         status = "passed",
