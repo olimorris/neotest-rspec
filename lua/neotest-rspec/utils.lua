@@ -43,6 +43,10 @@ M.parse_json_output = function(parsed_rspec_json, output_file)
 
     logger.info("RSpec ID:", { test_id })
 
+    if result.status == "pending" then
+      result.status = "skipped"
+    end
+
     tests[test_id] = {
       status = result.status,
       short = string.upper(result.file_path) .. "\n-> " .. string.upper(result.status) .. " - " .. result.description,
