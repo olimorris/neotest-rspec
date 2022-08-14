@@ -18,6 +18,6 @@ RSpec.describe 'a thing' do
 end
 
 # this is valid, but also seems to not show up
-# RSpec.describe do
-#   it { expect("single line tests".size).to eq(17) }
-# end
+RSpec.describe 'cool' do
+  it { expect("single line tests".size).to eq(17) }
+end

@@ -27,7 +27,7 @@ end
 ---@return neotest.Tree | nil
 function NeotestAdapter.discover_positions(path)
   local query = [[
-    ((call
+    (program (call
       method: (identifier) @func_name (#match? @func_name "^(describe|context)$")
       arguments: (argument_list (_) @namespace.name)
     )) @namespace.definition
