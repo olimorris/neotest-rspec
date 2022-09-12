@@ -25,9 +25,9 @@ M.generate_treesitter_id = function(position)
   -- Treesitter starts line numbers from 0 so we subtract 1
   local id = test_path .. separator .. (tonumber(position.range[1]) + 1)
 
-  logger.info("Cwd:", { cwd })
-  logger.info("Path to test file:", { position.path })
-  logger.info("Treesitter id:", { id })
+  logger.debug("Cwd:", { cwd })
+  logger.debug("Path to test file:", { position.path })
+  logger.debug("Treesitter id:", { id })
 
   return id
 end
@@ -41,7 +41,7 @@ M.parse_json_output = function(parsed_rspec_json, output_file)
   for _, result in pairs(parsed_rspec_json.examples) do
     local test_id = result.file_path .. separator .. result.line_number
 
-    logger.info("RSpec ID:", { test_id })
+    logger.debug("RSpec ID:", { test_id })
 
     if result.status == "pending" then
       result.status = "skipped"
