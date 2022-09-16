@@ -44,6 +44,7 @@ adapters = {
     end
   }),
 }
+```
 
 ## :rocket: Usage
 
