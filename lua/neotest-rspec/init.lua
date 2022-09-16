@@ -82,7 +82,7 @@ function NeotestAdapter.build_spec(args)
     "progress",
   })
 
-  if position.type == "file" then
+  local function run_by_filename()
     table.insert(script_args, position.path)
   end
 
@@ -105,12 +105,16 @@ function NeotestAdapter.build_spec(args)
     )
   end
 
-  if position.type == "namespace" then
-    run_by_test_name()
+  if position.type == "file" then
+    run_by_filename()
   end
 
-  if position.type == "test" then
+  if position.type == "test" or (position.type == "namespace" and vim.bo.filetype ~= "neotest-summary") then
     run_by_line_number()
+  end
+
+  if position.type == "dir" and vim.bo.filetype == "neotest-summary" then
+    run_by_filename()
   end
 
   local command = vim.tbl_flatten({
