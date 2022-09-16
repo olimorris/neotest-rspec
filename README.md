@@ -21,20 +21,29 @@ use({
     require('neotest').setup({
       ...,
       adapters = {
-        require('neotest-rspec')({
-          rspec_cmd = function()
-            return vim.tbl_flatten({
-              "bundle",
-              "exec",
-              "rspec",
-            })
-          end
-        }),
+        require('neotest-rspec'),
       }
     })
   end
 })
 ```
+
+## :wrench: Configuration
+
+The plugin may be configured as below:
+
+```lua
+adapters = {
+  require('neotest-rspec')({
+    rspec_cmd = function()
+      return vim.tbl_flatten({
+        "bundle",
+        "exec",
+        "rspec",
+      })
+    end
+  }),
+}
 
 ## :rocket: Usage
 
