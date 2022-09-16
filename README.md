@@ -21,7 +21,15 @@ use({
     require('neotest').setup({
       ...,
       adapters = {
-        require('neotest-rspec'),
+        require('neotest-rspec')({
+        rspec_cmd = function()
+          return vim.tbl_flatten({
+            "bundle",
+            "exec",
+            "rspec",
+          })
+        end
+        }),
       }
     })
   end
@@ -60,6 +68,7 @@ To trigger the tests for the adapter, run:
 ```
 
 ## :clap: Thanks
+
 A special thanks to the following contributers:
 
 - [Shanon McQuay](https://github.com/compactcode)

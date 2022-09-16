@@ -62,17 +62,21 @@ local function clean_test_name(test_name)
   return test_name
 end
 
+---@return string
+local function get_rspec_cmd()
+  return vim.tbl_flatten({
+    "bundle",
+    "exec",
+    "rspec",
+  })
+end
+
 ---@param args neotest.RunArgs
 ---@return neotest.RunSpec | nil
 function NeotestAdapter.build_spec(args)
   local position = args.tree:data()
   local results_path = async.fn.tempname()
 
-  local runner = vim.tbl_flatten({
-    "bundle",
-    "exec",
-    "rspec",
-  })
   local script_args = vim.tbl_flatten({
     "-f",
     "json",
@@ -118,7 +122,7 @@ function NeotestAdapter.build_spec(args)
   end
 
   local command = vim.tbl_flatten({
-    runner,
+    get_rspec_cmd(),
     script_args,
   })
 
@@ -159,8 +163,19 @@ function NeotestAdapter.results(spec, result, tree)
   return results
 end
 
+local is_callable = function(obj)
+  return type(obj) == "function" or (type(obj) == "table" and obj.__call)
+end
+
 setmetatable(NeotestAdapter, {
-  __call = function()
+  __call = function(_, opts)
+    if is_callable(opts.rspec_cmd) then
+      get_rspec_cmd = opts.rspec_cmd
+    elseif opts.rspec_cmd then
+      get_rspec_cmd = function()
+        return opts.rspec_cmd
+      end
+    end
     return NeotestAdapter
   end,
 })
