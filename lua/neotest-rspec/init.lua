@@ -46,7 +46,7 @@ function NeotestAdapter.discover_positions(path)
   return lib.treesitter.parse_positions(path, query, {
     nested_tests = true,
     require_namespaces = true,
-    position_id = utils.generate_treesitter_id,
+    position_id = "require('neotest-rspec.utils').generate_treesitter_id",
   })
 end
 
