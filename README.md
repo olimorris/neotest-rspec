@@ -46,6 +46,10 @@ adapters = {
 }
 ```
 
+### Running tests in a docker container
+
+This is not yet directly support by neotest, but you can accomplish this using a shell script as your rspec command. See [this comment](https://github.com/nvim-neotest/neotest/issues/89#issuecomment-1338141432) for an example.
+
 ## :rocket: Usage
 
 _NOTE_: All usages of `require('neotest').run.run` can be mapped to a command in your config (this is not included and should be done by yourself).
