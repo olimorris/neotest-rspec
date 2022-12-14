@@ -33,7 +33,7 @@ function NeotestAdapter.discover_positions(path)
     )) @namespace.definition
 
     ((call
-      method: (identifier) @func_name (#match? @func_name "^(it|scenario)$")
+      method: (identifier) @func_name (#match? @func_name "^(it|scenario|it_behaves_like)$")
       arguments: (argument_list (_) @test.name)
     )) @test.definition
 
