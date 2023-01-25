@@ -38,6 +38,8 @@ end
 M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
   local tests = {}
 
+  print(vim.inspect(parsed_rspec_json))
+
   for _, result in pairs(parsed_rspec_json.examples) do
     local test_id
     if engine_name then
