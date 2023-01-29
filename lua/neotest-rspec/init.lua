@@ -71,13 +71,35 @@ local function get_rspec_cmd()
   })
 end
 
-local path = vim.fn.expand("%")
+---Given a string, escape all the special pattern chars in it.
+---@param s string
+---@return string
+local function escapeSearchPattern(s)
+  return (
+    s:gsub("%%", "%%%%")
+      :gsub("^%^", "%%^")
+      :gsub("%$$", "%%$")
+      :gsub("%(", "%%(")
+      :gsub("%)", "%%)")
+      :gsub("%.", "%%.")
+      :gsub("%[", "%%[")
+      :gsub("%]", "%%]")
+      :gsub("%*", "%%*")
+      :gsub("%+", "%%+")
+      :gsub("%-", "%%-")
+      :gsub("%?", "%%?")
+  )
+end
 
 ---@param args neotest.RunArgs
 ---@return neotest.RunSpec | nil
 function NeotestAdapter.build_spec(args)
   local position = args.tree:data()
   local engine_name = nil
+
+  local root = NeotestAdapter.root(position.path)
+  local path = string.gsub(position.path, escapeSearchPattern(root .. "/"), "")
+
   -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
   local match = vim.regex("spec/"):match_str(path)
   if match and match ~= 0 then
