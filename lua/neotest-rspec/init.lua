@@ -71,12 +71,13 @@ local function get_rspec_cmd()
   })
 end
 
+local path = vim.fn.expand("%")
+
 ---@param args neotest.RunArgs
 ---@return neotest.RunSpec | nil
 function NeotestAdapter.build_spec(args)
   local position = args.tree:data()
   local engine_name = nil
-  local path = vim.fn.expand("%")
   -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
   local match = vim.regex("spec/"):match_str(path)
   if match and match ~= 0 then
