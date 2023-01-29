@@ -35,11 +35,16 @@ end
 ---@param parsed_rspec_json table
 ---@param output_file string
 ---@return neotest.Result[]
-M.parse_json_output = function(parsed_rspec_json, output_file)
+M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
   local tests = {}
 
   for _, result in pairs(parsed_rspec_json.examples) do
-    local test_id = result.file_path .. separator .. result.line_number
+    local test_id
+    if engine_name then
+      test_id = "./" .. engine_name .. string.sub(result.file_path, 2) .. separator .. result.line_number
+    else
+      test_id = result.file_path .. separator .. result.line_number
+    end
 
     logger.debug("RSpec ID:", { test_id })
 

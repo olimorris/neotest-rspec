@@ -75,6 +75,15 @@ end
 ---@return neotest.RunSpec | nil
 function NeotestAdapter.build_spec(args)
   local position = args.tree:data()
+  local engine_name = nil
+
+  local path = async.fn.expand('%')
+
+  -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
+  local match = vim.regex("spec/"):match_str(path)
+  if match and match ~= 0 then
+    engine_name = string.sub(path, 0, match - 1)
+  end
   local results_path = async.fn.tempname()
 
   local script_args = vim.tbl_flatten({
@@ -88,16 +97,6 @@ function NeotestAdapter.build_spec(args)
 
   local function run_by_filename()
     table.insert(script_args, position.path)
-  end
-
-  local function run_by_test_name()
-    table.insert(
-      script_args,
-      vim.tbl_flatten({
-        "-e",
-        clean_test_name(position.name),
-      })
-    )
   end
 
   local function run_by_line_number()
@@ -127,9 +126,11 @@ function NeotestAdapter.build_spec(args)
   })
 
   return {
+    cwd = engine_name,
     command = command,
     context = {
       results_path = results_path,
+      engine_name = engine_name,
     },
   }
 end
@@ -141,6 +142,7 @@ end
 ---@return neotest.Result[]
 function NeotestAdapter.results(spec, result, tree)
   local output_file = spec.context.results_path
+  local engine_name = spec.context.engine_name
 
   local ok, data = pcall(lib.files.read, output_file)
   if not ok then
@@ -154,7 +156,7 @@ function NeotestAdapter.results(spec, result, tree)
     return {}
   end
 
-  local ok, results = pcall(utils.parse_json_output, parsed_data, output_file)
+  local ok, results = pcall(utils.parse_json_output, parsed_data, output_file, engine_name)
   if not ok then
     logger.error("Failed to get test results:", output_file)
     return {}
