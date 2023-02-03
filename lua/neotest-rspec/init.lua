@@ -29,7 +29,7 @@ end
 ---@return boolean
 function NeotestAdapter.filter_dir(name, rel_path, root)
   local _, count = rel_path:gsub("/", "")
-  if rel_path:match("spec") or count <= 1  then
+  if rel_path:match("spec") or count < 1  then
     return true
   end
   return false
