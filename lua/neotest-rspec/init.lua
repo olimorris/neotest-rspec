@@ -29,10 +29,7 @@ end
 ---@return boolean
 function NeotestAdapter.filter_dir(name, rel_path, root)
   local _, count = rel_path:gsub("/", "")
-  if rel_path:match("spec") or count < 1  then
-    return true
-  end
-  return false
+  return rel_path:match("spec") or count < 1
 end
 
 ---Given a file path, parse all the tests within it.
