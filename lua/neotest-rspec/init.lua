@@ -21,6 +21,20 @@ function NeotestAdapter.is_test_file(file_path)
   return vim.endswith(file_path, "_spec.rb")
 end
 
+---Filter directories when searching for test files
+---@async
+---@param name string Name of directory
+---@param rel_path string Path to directory, relative to root
+---@param root string Root directory of project
+---@return boolean
+function NeotestAdapter.filter_dir(name, rel_path, root)
+  local _, count = rel_path:gsub("/", "")
+  if rel_path:match("spec") or count <= 1  then
+    return true
+  end
+  return false
+end
+
 ---Given a file path, parse all the tests within it.
 ---@async
 ---@param file_path string Absolute file path
