@@ -55,6 +55,11 @@ function NeotestAdapter.discover_positions(path)
       method: (identifier) @func_name (#eq? @func_name "it")
       block: (block (_) @test.name)
     )) @test.definition
+
+    ((call
+      method: (identifier) @func_name (#eq? @func_name "it")
+      block: (do_block (_) @test.name)
+    )) @test.definition
   ]]
 
   return lib.treesitter.parse_positions(path, query, {
