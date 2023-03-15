@@ -47,6 +47,12 @@ function NeotestAdapter.discover_positions(path)
     )) @namespace.definition
 
     ((call
+      method: (identifier) @namespace.name (#match? @namespace.name "^(describe|context|feature)$")
+      .
+      block: (_)
+    )) @namespace.definition
+
+    ((call
       method: (identifier) @func_name (#match? @func_name "^(it|scenario|it_behaves_like)$")
       arguments: (argument_list (_) @test.name)
     )) @test.definition
@@ -96,7 +102,7 @@ function NeotestAdapter.build_spec(args)
   local position = args.tree:data()
   local engine_name = nil
 
-  local path = async.fn.expand('%')
+  local path = async.fn.expand("%")
 
   -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
   local match = vim.regex("spec/"):match_str(path)
