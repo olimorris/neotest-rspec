@@ -15,6 +15,8 @@ local function init(client)
     for _, output in pairs(short_output) do
       if file then
         file:write(output .. "\n")
+      else
+        print("Could not write to file")
       end
     end
     if file then
