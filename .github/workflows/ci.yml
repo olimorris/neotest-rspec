@@ -24,7 +24,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - run: date +%F > todays-date
+
       - name: Restore cache for today's nightly.
         uses: actions/cache@v2
         with:
@@ -43,6 +45,9 @@ jobs:
           export PATH="${PWD}/_neovim/bin:${PATH}"
           export VIM="${PWD}/_neovim/share/nvim/runtime"
           nvim --headless -c 'TSInstallSync ruby | quit'
+
+      - name: Install Lua
+        uses: leafo/gh-actions-lua@v10
 
       - name: Run tests
         run: |
