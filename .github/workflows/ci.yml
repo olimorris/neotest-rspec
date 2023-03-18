@@ -45,4 +45,8 @@ jobs:
           nvim --headless -c 'TSInstallSync ruby | quit'
 
       - name: Run tests
-        run: make test
+        run: |
+          export PATH="${PWD}/_neovim/bin:${PATH}"
+          export VIM="${PWD}/_neovim/share/nvim/runtime"
+          nvim --version
+          make test
