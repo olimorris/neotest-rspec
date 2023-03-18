@@ -46,7 +46,7 @@ describe("Testing", function()
       coroutine.yield()
 
       local output_file = io.open(cwd .. "/tests/test_output.txt", "r")
-      print(output_file)
+      print(output_file:read("*a"))
       local output = test_utils.split_string(output_file:read("*a"), "\n")
       output_file:close()
 
