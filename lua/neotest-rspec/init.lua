@@ -18,7 +18,7 @@ NeotestAdapter.root = lib.files.match_root_pattern("Gemfile", ".rspec", ".gitign
 ---@param file_path string
 ---@return boolean
 function NeotestAdapter.is_test_file(file_path)
-  return vim.endswith(file_path, "_spec.rb")
+  return vim.endswith(file_path, "_spec.rb") or vim.endswith(file_path, "_spec.start.rb")
 end
 
 ---Filter directories when searching for test files

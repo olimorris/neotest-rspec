@@ -40,7 +40,7 @@ luac.out
 *.hex
 
 # Others
-neotest/
-plenary.nvim/
+misc
+tests/test_output.txt
 output.json
 .luarc.json
