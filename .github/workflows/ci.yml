@@ -46,12 +46,8 @@ jobs:
           export VIM="${PWD}/_neovim/share/nvim/runtime"
           nvim --headless -c 'TSInstallSync ruby | quit'
 
-      - name: Install Lua
-        uses: leafo/gh-actions-lua@v10
-
       - name: Run tests
         run: |
-          lua -v
           export PATH="${PWD}/_neovim/bin:${PATH}"
           export VIM="${PWD}/_neovim/share/nvim/runtime"
           nvim --version
