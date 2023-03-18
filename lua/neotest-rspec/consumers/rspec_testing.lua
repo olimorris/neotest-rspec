@@ -11,7 +11,7 @@ local function init(client)
     end
 
     -- Write the output to disk
-    local file = io.open(cwd .. "/tests/test_output.txt", "a+")
+    local file = io.open(cwd .. "/tests/test_output.txt", "w+")
     for _, output in pairs(short_output) do
       if file then
         file:write(output .. "\n")

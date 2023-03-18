@@ -27,18 +27,23 @@ end
 
 describe("Testing", function()
   for_each_file(function(file)
-    a.it(string.format("File: %s", file), function()
+    it(string.format("File: %s", file), function()
       local parts = test_utils.split_string(file, "%.")
       local filename_prefix = parts[1]
 
       -- Delete the test results
       -- os.remove(cwd .. "/tests/test_output.txt")
 
-      test_utils.open_test_file(file)
+      local bufnr = test_utils.open_test_file(file)
       local expected = test_utils.get_contents(string.format("%s.expected", filename_prefix))
 
+      local co = coroutine.running()
+      vim.defer_fn(function()
+        coroutine.resume(co)
+      end, 1000)
+
       test_utils.run_commands(filename_prefix)
-      async.util.scheduler()
+      coroutine.yield()
 
       local output_file = io.open(cwd .. "/tests/test_output.txt", "r")
       local output = test_utils.split_string(output_file:read("*a"), "\n")
