@@ -5,23 +5,12 @@ neotest.rspec_testing = {}
 
 local function init(client)
   client.listeners.results = function(_, results)
-    local short_output = {}
+    local output = {}
     for pos_id, result in pairs(results) do
-      short_output[#short_output + 1] = result.short
+      output[#output + 1] = result.testing_output
     end
 
-    -- Write the output to disk
-    local file = io.open(cwd .. "/test_output.txt", "w+")
-    for _, output in pairs(short_output) do
-      if file then
-        file:write(output .. "\n")
-      else
-        print("Could not write to file")
-      end
-    end
-    if file then
-      file:close()
-    end
+    TEST_OUTPUT = output
   end
 end
 
