@@ -32,7 +32,7 @@ describe("Testing", function()
       local filename_prefix = parts[1]
 
       -- Delete the test results
-      os.remove(cwd .. "/tests/test_output.txt")
+      -- os.remove(cwd .. "test_output.txt")
 
       local bufnr = test_utils.open_test_file(file)
       local expected = test_utils.get_contents(string.format("%s.expected", filename_prefix))
@@ -45,8 +45,7 @@ describe("Testing", function()
       test_utils.run_commands(filename_prefix)
       coroutine.yield()
 
-      local output_file = io.open(cwd .. "/tests/test_output.txt", "r")
-      print(output_file:read("*a"))
+      local output_file = io.open(cwd .. "/test_output.txt", "r")
       local output = test_utils.split_string(output_file:read("*a"), "\n")
       output_file:close()
 

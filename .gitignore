@@ -41,6 +41,6 @@ luac.out
 
 # Others
 misc
-tests/test_output.txt
+test_output.txt
 output.json
 .luarc.json
