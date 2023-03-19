@@ -4,6 +4,7 @@ set rtp+=.
 set rtp+=./misc/neotest
 set rtp+=./misc/plenary
 set rtp+=./misc/treesitter
+set rtp+=./tests
 
 lua << EOF
 require("neotest").setup({
