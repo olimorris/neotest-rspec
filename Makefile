@@ -3,13 +3,10 @@ PLENARY_DIR = misc/plenary
 TREESITTER_DIR = misc/treesitter
 TEST_DIR = tests/unit
 
-ci: $(TREESITTER_DIR)
-	nvim --headless -c 'TSInstallSync! ruby | quit' -c quit
-
 test: $(NEOTEST_DIR) $(PLENARY_DIR) $(TREESITTER_DIR)
 	nvim --headless --clean \
-	-u tests/init.vim \
-	-c "PlenaryBustedDirectory $(TEST_DIR) { minimal_init = 'tests/init.vim' }"
+	-u tests/init.lua \
+	-c "PlenaryBustedDirectory $(TEST_DIR) { minimal_init = 'tests/init.lua' }"
 
 $(NEOTEST_DIR):
 	git clone --depth=1 --no-single-branch https://github.com/nvim-neotest/neotest $(NEOTEST_DIR)
