@@ -24,11 +24,17 @@ function M.split_string(inputstr, sep)
 end
 
 function M.read_file(file)
-    return Path:new("", file):read()
+  local file = Path:new("", file)
+  if file:exists() then return file:read() end
+
+  return nil
 end
 
 function M.get_contents(file)
-    return M.split_string(M.read_file(file), "\n")
+  local file = M.read_file(file)
+  if file then return M.split_string(file, "\n") end
+
+  return nil
 end
 
 local function get_commands(filename_prefix)
@@ -46,11 +52,13 @@ function M.open_test_file(file)
   return vim.api.nvim_get_current_buf()
 end
 
+function M.close_test_file(bufnr)
+  return vim.api.nvim_buf_delete(bufnr)
+end
+
 function M.check_if_skip_test(test_name, tests_to_skip)
   for _, test in pairs(tests_to_skip) do
-    if test_name == test then
-      return true
-    end
+    if test_name == test then return true end
   end
   return false
 end
