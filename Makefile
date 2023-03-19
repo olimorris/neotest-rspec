@@ -4,13 +4,17 @@ PLENARY_DIR = misc/plenary
 PLENARY_URL = https://github.com/nvim-lua/plenary.nvim
 TREESITTER_DIR = misc/treesitter
 TREESITTER_URL = https://github.com/nvim-treesitter/nvim-treesitter
-TEST_DIR = tests/
+TEST_DIR = tests
 
-test: $(NEOTEST_DIR) $(PLENARY_DIR) $(TREESITTER_DIR)
-	echo "===> Testing:"
+ci: treesitter test
+
+treesitter: $(TREESITTER_DIR)
+	nvim --headless -c 'TSInstallSync ruby | quit'
+
+test: $(NEOTEST_DIR) $(PLENARY_DIR)
 	nvim --headless --clean \
 	-u tests/init.vim \
-	-c "PlenaryBustedDirectory $(TEST_DIR) {minimal_init = 'tests/init.vim'}"
+	-c "PlenaryBustedDirectory $(TEST_DIR) { minimal_init = 'tests/init.vim' }"
 
 $(NEOTEST_DIR):
 	git clone --depth=1 --no-single-branch $(NEOTEST_URL) $(NEOTEST_DIR)
