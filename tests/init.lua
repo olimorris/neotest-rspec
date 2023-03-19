@@ -11,7 +11,6 @@ require("nvim-treesitter.configs").setup({
   sync_install = true,
 })
 
-
 require("neotest").setup({
   adapters = {
     require("neotest-rspec"),
