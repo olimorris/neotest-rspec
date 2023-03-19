@@ -4,15 +4,12 @@ set rtp+=./misc/plenary
 set rtp+=./misc/treesitter
 
 lua << EOF
-require("nvim-treesitter.configs").setup({
-	ensure_installed = "ruby",
-})
 require("neotest").setup({
 	adapters = {
 		require("neotest-rspec"),
 	},
 	consumers = {
-		rspec_testing = require("neotest-rspec.consumers.rspec_testing")
+		adapter_testing = require("neotest-rspec.consumers.adapter_testing")
 	}
 })
 EOF
