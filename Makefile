@@ -4,12 +4,10 @@ PLENARY_DIR = misc/plenary
 PLENARY_URL = https://github.com/nvim-lua/plenary.nvim
 TREESITTER_DIR = misc/treesitter
 TREESITTER_URL = https://github.com/nvim-treesitter/nvim-treesitter
-TEST_DIR = tests
+TEST_DIR = tests/unit
 
-ci: treesitter test
-
-treesitter: $(TREESITTER_DIR)
-	nvim --headless -c 'TSInstallSync ruby | quit'
+ci: $(TREESITTER_DIR)
+	nvim --headless -c 'TSInstallSync! ruby | quit' -c quit
 
 test: $(NEOTEST_DIR) $(PLENARY_DIR)
 	nvim --headless --clean \

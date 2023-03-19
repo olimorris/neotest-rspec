@@ -1,7 +1,12 @@
+set noswapfile
+
 set rtp+=.
 set rtp+=./misc/neotest
 set rtp+=./misc/plenary
 set rtp+=./misc/treesitter
+
+runtime! plugin/plenary.vim
+runtime! plugin/nvim-treesitter.lua
 
 lua << EOF
 require("neotest").setup({
@@ -13,6 +18,3 @@ require("neotest").setup({
 	}
 })
 EOF
-
-runtime! plugin/plenary.vim
-

@@ -43,7 +43,7 @@ function M.describe(describing, name)
       test_utils.open_test_file(test)
 
       for_each_command(test, function(command)
-        it(string.format("File: %s", command), function()
+        it(string.format("(file: %s)", command), function()
           local expected = test_utils.get_contents(string.format("%s.expected", command))
           if not expected then return assert_skipped("Could not find expected output file") end
 

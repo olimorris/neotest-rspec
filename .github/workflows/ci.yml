@@ -46,3 +46,4 @@ jobs:
           export VIM="${PWD}/_neovim/share/nvim/runtime"
           nvim --version
           make ci
+          make test
