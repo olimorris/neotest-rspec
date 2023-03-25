@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Class do
   describe '.new' do
     # should be marked as skipped

@@ -16,8 +16,3 @@ RSpec.describe 'a thing' do
   # # if this line is present it will make it so no other tests in this group show up, everything else in this group seems ok
   it 'this is a pending test'
 end
-
-# this is valid, but also seems to not show up
-RSpec.describe do
-  it { expect("single line tests".size).to eq(17) }
-end

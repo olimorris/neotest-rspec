@@ -55,6 +55,7 @@ M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
     tests[test_id] = {
       status = result.status,
       short = string.upper(result.file_path) .. "\n-> " .. string.upper(result.status) .. " - " .. result.description,
+      testing_output = string.upper(result.file_path) .. "@@" .. string.upper(result.status) .. "@@" .. result.description,
       output_file = output_file,
     }
 
