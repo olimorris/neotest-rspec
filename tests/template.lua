@@ -3,11 +3,6 @@ local scandir = require("plenary.scandir")
 local test_utils = require("tests.utils")
 
 local cwd = vim.loop.cwd()
-vim.cmd("set rtp+=" .. cwd)
-
-local eq = assert.are.same
-
-local tests_to_skip = {}
 
 local function assert_skipped(reason)
   error("SKIPPED: " .. reason, 0)
@@ -16,7 +11,7 @@ end
 local function for_each_test_file(test, callback)
   local files = scandir.scan_dir(Path:new(cwd, "spec"):absolute())
   for _, file in pairs(files) do
-    if string.match(file, test) and not test_utils.check_if_skip_test(file, tests_to_skip) then
+    if string.match(file, test) then
       callback(file)
     end
   end
@@ -56,7 +51,7 @@ function M.describe(describing, name)
           coroutine.yield()
 
           -- Get the test output from the custom consumer
-          eq(expected, TEST_OUTPUT)
+          assert.are.same(expected, TEST_OUTPUT)
         end)
       end)
     end)
