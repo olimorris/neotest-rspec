@@ -62,7 +62,7 @@ function NeotestAdapter.discover_positions(path)
 
     ((call
       method: (identifier) @func_name (#eq? @func_name "it")
-      block: (do_block (_) @test.name)
+      arguments: (argument_list) @test.name
     )) @test.definition
   ]]
 
