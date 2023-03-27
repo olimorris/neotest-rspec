@@ -29,9 +29,7 @@ end
 ---@return boolean
 function NeotestAdapter.filter_dir(name, rel_path, root)
   local _, count = rel_path:gsub("/", "")
-  if rel_path:match("spec") or count < 1 then
-    return true
-  end
+  if rel_path:match("spec") or count < 1 then return true end
   return false
 end
 
@@ -78,9 +76,7 @@ end
 ---@param test_name string
 ---@return string
 local function clean_test_name(test_name)
-  if string.sub(test_name, -1) == '"' or string.sub(test_name, -1) == "'" then
-    test_name = test_name:sub(1, -2)
-  end
+  if string.sub(test_name, -1) == '"' or string.sub(test_name, -1) == "'" then test_name = test_name:sub(1, -2) end
   if string.sub(test_name, 1, 1) == '"' or string.sub(test_name, 1, 1) == "'" then
     test_name = test_name:sub(2, #test_name)
   end
@@ -106,9 +102,7 @@ function NeotestAdapter.build_spec(args)
 
   -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
   local match = vim.regex("spec/"):match_str(path)
-  if match and match ~= 0 then
-    engine_name = string.sub(path, 0, match - 1)
-  end
+  if match and match ~= 0 then engine_name = string.sub(path, 0, match - 1) end
   local results_path = async.fn.tempname()
 
   local script_args = vim.tbl_flatten({
@@ -133,17 +127,13 @@ function NeotestAdapter.build_spec(args)
     )
   end
 
-  if position.type == "file" then
-    run_by_filename()
-  end
+  if position.type == "file" then run_by_filename() end
 
   if position.type == "test" or (position.type == "namespace" and vim.bo.filetype ~= "neotest-summary") then
     run_by_line_number()
   end
 
-  if position.type == "dir" and vim.bo.filetype == "neotest-summary" then
-    run_by_filename()
-  end
+  if position.type == "dir" and vim.bo.filetype == "neotest-summary" then run_by_filename() end
 
   local command = vim.tbl_flatten({
     get_rspec_cmd(),
