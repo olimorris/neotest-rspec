@@ -1,4 +1,8 @@
-local async = require("neotest.async")
+local ok, async = pcall(require, "nio")
+if not ok then
+  async = require("neotest.async")
+end
+
 local lib = require("neotest.lib")
 local logger = require("neotest.logging")
 local utils = require("neotest-rspec.utils")

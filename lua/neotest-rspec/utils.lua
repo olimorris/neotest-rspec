@@ -1,4 +1,9 @@
-local async = require("neotest.async")
+local ok, async = pcall(require, "nio")
+if not ok then
+  print("using plenary")
+  async = require("neotest.async")
+end
+
 local logger = require("neotest.logging")
 
 local M = {}
@@ -20,7 +25,7 @@ end
 ---@param namespace neotest.Position[] Any namespaces the position is within
 ---@return string
 M.generate_treesitter_id = function(position)
-  local cwd = async.fn.getcwd()
+  local cwd = vim.fn.getcwd()
   local test_path = "." .. replace_paths(position.path, cwd, "")
   -- Treesitter starts line numbers from 0 so we subtract 1
   local id = test_path .. separator .. (tonumber(position.range[1]) + 1)
