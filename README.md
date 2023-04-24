@@ -78,12 +78,12 @@ This project is maintained by the Neovim Ruby community. Please raise a PR if yo
 To trigger the tests for the adapter, run:
 
 ```sh
-./scripts/test
+make test
 ```
 
 ## :clap: Thanks
 
-A special thanks to the following contributers:
+A special thanks to the following contributors:
 
 - [Shanon McQuay](https://github.com/compactcode)
 - [Brendan Mulholland](https://github.com/bmulholland)
