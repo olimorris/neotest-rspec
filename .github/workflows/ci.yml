@@ -10,32 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Neovim
-        run: |
-          wget -q https://github.com/neovim/neovim/releases/download/v0.8.3/nvim-linux64.deb -O /tmp/nvim.deb
-          sudo dpkg -i /tmp/nvim.deb
-
-      - name: Install tree-sitter CLI
-        run: |
-          npm install -g tree-sitter-cli
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git curl unzip xz-utils
-
-      - name: Set up nvim-treesitter
-        run: |
-          mkdir -p ~/.config/nvim
-          echo 'set rtp+=~/.local/share/nvim/site/pack/nvim-treesitter/start/nvim-treesitter' > ~/.config/nvim/init.vim
-          echo 'lua << EOF' >> ~/.config/nvim/init.vim
-          echo 'require("nvim-treesitter.configs").setup({ ensure_installed = "ruby" })' >> ~/.config/nvim/init.vim
-          echo 'EOF' >> ~/.config/nvim/init.vim
-
-      - name: Install nvim-treesitter
-        run: |
-          git clone https://github.com/nvim-treesitter/nvim-treesitter.git ~/.local/share/nvim/site/pack/nvim-treesitter/start/nvim-treesitter
-          nvim --headless -c "TSInstallSync ruby" -c "q"
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
 
       - name: Run tests
         run: |
