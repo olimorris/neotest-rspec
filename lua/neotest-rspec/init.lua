@@ -77,16 +77,6 @@ function NeotestAdapter.discover_positions(path)
   })
 end
 
----@param test_name string
----@return string
-local function clean_test_name(test_name)
-  if string.sub(test_name, -1) == '"' or string.sub(test_name, -1) == "'" then test_name = test_name:sub(1, -2) end
-  if string.sub(test_name, 1, 1) == '"' or string.sub(test_name, 1, 1) == "'" then
-    test_name = test_name:sub(2, #test_name)
-  end
-  return test_name
-end
-
 ---@return string
 local function get_rspec_cmd()
   return vim.tbl_flatten({
