@@ -1,7 +1,5 @@
 local ok, async = pcall(require, "nio")
-if not ok then
-  async = require("neotest.async")
-end
+if not ok then async = require("neotest.async") end
 
 local lib = require("neotest.lib")
 local logger = require("neotest.logging")
@@ -55,18 +53,13 @@ function NeotestAdapter.discover_positions(path)
     )) @namespace.definition
 
     ((call
-      method: (identifier) @func_name (#match? @func_name "^(it|scenario|it_behaves_like)$")
-      arguments: (argument_list (_) @test.name)
-    )) @test.definition
-
-    ((call
       method: (identifier) @func_name (#eq? @func_name "it")
       block: (block (_) @test.name)
     )) @test.definition
 
     ((call
-      method: (identifier) @func_name (#eq? @func_name "it")
-      arguments: (argument_list) @test.name
+      method: (identifier) @func_name (#match? @func_name "^(it|scenario|it_behaves_like)$")
+      arguments: (argument_list (_) @test.name)
     )) @test.definition
   ]]
 
