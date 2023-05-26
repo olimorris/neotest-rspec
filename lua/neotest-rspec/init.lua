@@ -4,6 +4,7 @@ if not ok then async = require("neotest.async") end
 local lib = require("neotest.lib")
 local logger = require("neotest.logging")
 local utils = require("neotest-rspec.utils")
+local config = require("neotest-rspec.config")
 
 ---@class neotest.Adapter
 ---@field name string
@@ -14,7 +15,18 @@ local NeotestAdapter = { name = "neotest-rspec" }
 ---@async
 ---@param dir string @Directory to treat as cwd
 ---@return string | nil @Absolute root dir of test suite
-NeotestAdapter.root = lib.files.match_root_pattern("Gemfile", ".rspec", ".gitignore")
+function NeotestAdapter.root(dir)
+  local result = nil
+  local root_files =
+    vim.list_extend(config.get_root_files(), { "Gemfile", ".rspec", ".gitignore" })
+
+  for _, root_file in ipairs(root_files) do
+    result = lib.files.match_root_pattern(root_file)(dir)
+    if result then break end
+  end
+
+  return result
+end
 
 ---@async
 ---@param file_path string
@@ -26,18 +38,20 @@ end
 ---Filter directories when searching for test files
 ---@async
 ---@param name string Name of directory
----@param rel_path string Path to directory, relative to root
----@param root string Root directory of project
 ---@return boolean
-function NeotestAdapter.filter_dir(name, rel_path, root)
-  local _, count = rel_path:gsub("/", "")
-  if rel_path:match("spec") or count < 1 then return true end
-  return false
+function NeotestAdapter.filter_dir(name)
+  local filter_dirs = vim.list_extend(config.get_filter_dirs(), { ".git", "node_modules" })
+
+  for _, filter_dir in ipairs(filter_dirs) do
+    if name == filter_dir then return false end
+  end
+
+  return true
 end
 
 ---Given a file path, parse all the tests within it.
 ---@async
----@param file_path string Absolute file path
+---@param path string Absolute file path
 ---@return neotest.Tree | nil
 function NeotestAdapter.discover_positions(path)
   local query = [[
@@ -67,15 +81,6 @@ function NeotestAdapter.discover_positions(path)
     nested_tests = true,
     require_namespaces = true,
     position_id = "require('neotest-rspec.utils').generate_treesitter_id",
-  })
-end
-
----@return string
-local function get_rspec_cmd()
-  return vim.tbl_flatten({
-    "bundle",
-    "exec",
-    "rspec",
   })
 end
 
@@ -123,7 +128,7 @@ function NeotestAdapter.build_spec(args)
   if position.type == "dir" and vim.bo.filetype == "neotest-summary" then run_by_filename() end
 
   local command = vim.tbl_flatten({
-    get_rspec_cmd(),
+    config.get_rspec_cmd(),
     script_args,
   })
 
@@ -174,10 +179,24 @@ end
 setmetatable(NeotestAdapter, {
   __call = function(_, opts)
     if is_callable(opts.rspec_cmd) then
-      get_rspec_cmd = opts.rspec_cmd
+      config.get_rspec_cmd = opts.rspec_cmd
     elseif opts.rspec_cmd then
-      get_rspec_cmd = function()
+      config.get_rspec_cmd = function()
         return opts.rspec_cmd
+      end
+    end
+    if is_callable(opts.root_files) then
+      config.get_root_files = opts.root_files
+    elseif opts.root_files then
+      config.get_root_files = function()
+        return opts.root_files
+      end
+    end
+    if is_callable(opts.filter_dirs) then
+      config.get_filter_dirs = opts.filter_dirs
+    elseif opts.filter_dirs then
+      config.get_filter_dirs = function()
+        return opts.filter_dirs
       end
     end
     return NeotestAdapter
