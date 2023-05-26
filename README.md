@@ -85,6 +85,8 @@ The command used to run tests can be changed via the `rspec_cmd` option:
 require("neotest-rspec")({
   rspec_cmd = function()
     return vim.tbl_flatten({
+      "bundle",
+      "exec",
       "rspec",
     })
   end
