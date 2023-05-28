@@ -54,7 +54,7 @@ use({
 
 ### Default configuration
 
-> **Note**: You only need to the call the `setup` function if you wish to change any of the defaults.
+> **Note**: You only need to the call the `setup` function if you wish to change any of the defaults
 
 <details>
   <summary>Click to see the default configuration</summary>
@@ -105,7 +105,7 @@ require("neotest-rspec")({
 
 ### Filtering directories
 
-By default, the adapter will search for `_spec.rb` files in all dirs in the root with the exception of `node_modules` and `.git`. In a big project, this may result in slow performance. You can also add additional directories to filter out:
+By default, the adapter will search for `_spec.rb` files in all dirs in the root with the exception of `node_modules` and `.git`. You can also add additional directories to filter out:
 
 ```lua
 require("neotest-rspec")({
@@ -115,11 +115,11 @@ require("neotest-rspec")({
 
 ### Running tests in a docker container
 
-This is not yet directly support by neotest, but you can accomplish this using a shell script as your rspec command. See [this comment](https://github.com/nvim-neotest/neotest/issues/89#issuecomment-1338141432) for an example.
+Whilst not directly supported by neotest, but you can accomplish this using a shell script as your Rspec command. See [this comment](https://github.com/nvim-neotest/neotest/issues/89#issuecomment-1338141432) for an example.
 
 ## :rocket: Usage
 
-> **Note**: All usages of `require("neotest").run.run` can be mapped to a command in your config (this is not included and should be done by yourself).
+> **Note**: All usages of `require("neotest").run.run` can be mapped to a command in your config
 
 #### Test single function
 
