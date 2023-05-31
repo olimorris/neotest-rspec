@@ -9,11 +9,11 @@ M.get_rspec_cmd = function()
 end
 
 M.get_root_files = function()
-  return {}
+  return { "Gemfile", ".rspec", ".gitignore" }
 end
 
 M.get_filter_dirs = function()
-  return {}
+  return { ".git", "node_modules" }
 end
 
 return M

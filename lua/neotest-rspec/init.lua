@@ -15,10 +15,8 @@ local NeotestAdapter = { name = "neotest-rspec" }
 ---@return string | nil @Absolute root dir of test suite
 function NeotestAdapter.root(dir)
   local result = nil
-  local root_files =
-    vim.list_extend(config.get_root_files(), { "Gemfile", ".rspec", ".gitignore" })
 
-  for _, root_file in ipairs(root_files) do
+  for _, root_file in ipairs(config.get_root_files()) do
     result = lib.files.match_root_pattern(root_file)(dir)
     if result then break end
   end
@@ -38,9 +36,7 @@ end
 ---@param name string Name of directory
 ---@return boolean
 function NeotestAdapter.filter_dir(name)
-  local filter_dirs = vim.list_extend(config.get_filter_dirs(), { ".git", "node_modules" })
-
-  for _, filter_dir in ipairs(filter_dirs) do
+  for _, filter_dir in ipairs(config.get_filter_dirs()) do
     if name == filter_dir then return false end
   end
 
