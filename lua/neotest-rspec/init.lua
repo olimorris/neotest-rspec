@@ -90,12 +90,13 @@ function NeotestAdapter.build_spec(args)
   local position = args.tree:data()
   local engine_name = nil
 
+  local spec_path = config.transform_spec_path(position.path)
   local path = async.fn.expand("%")
 
   -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
   local match = vim.regex("^spec/"):match_str(path)
   if match and match ~= 0 then engine_name = string.sub(path, 0, match - 1) end
-  local results_path = async.fn.tempname()
+  local results_path = config.results_path()
 
   local script_args = vim.tbl_flatten({
     "-f",
@@ -107,14 +108,14 @@ function NeotestAdapter.build_spec(args)
   })
 
   local function run_by_filename()
-    table.insert(script_args, position.path)
+    table.insert(script_args, spec_path)
   end
 
   local function run_by_line_number()
     table.insert(
       script_args,
       vim.tbl_flatten({
-        position.path .. ":" .. tonumber(position.range[1] + 1),
+        spec_path .. ":" .. tonumber(position.range[1] + 1),
       })
     )
   end
@@ -197,6 +198,20 @@ setmetatable(NeotestAdapter, {
     elseif opts.filter_dirs then
       config.get_filter_dirs = function()
         return opts.filter_dirs
+      end
+    end
+    if is_callable(opts.transform_spec_path) then
+      config.transform_spec_path = opts.transform_spec_path
+    elseif opts.transform_spec_path then
+      config.transform_spec_path = function()
+        return opts.transform_spec_path
+      end
+    end
+    if is_callable(opts.results_path) then
+      config.results_path = opts.results_path
+    elseif opts.results_path then
+      config.results_path = function()
+        return opts.results_path
       end
     end
     return NeotestAdapter
