@@ -9,5 +9,8 @@ RSpec.describe Array do
     it do
       is_expected.to be_empty
     end
+    it do
+      expect(true).to be(true)
+    end
   end
 end
