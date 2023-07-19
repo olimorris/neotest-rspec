@@ -66,6 +66,12 @@ function NeotestAdapter.discover_positions(path)
     )) @test.definition
 
     ((call
+      method: (identifier) @func_name (#eq? @func_name "it")
+      block: (do_block (_) @test.name)
+      !arguments
+    )) @test.definition
+
+    ((call
       method: (identifier) @func_name (#match? @func_name "^(it|scenario|it_behaves_like)$")
       arguments: (argument_list (_) @test.name)
     )) @test.definition
