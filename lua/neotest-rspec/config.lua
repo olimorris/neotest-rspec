@@ -21,7 +21,7 @@ M.transform_spec_path = function(path)
 end
 
 M.results_path = function()
-  return async.fn.tempname()
+  return require("neotest.async").fn.tempname()
 end
 
 return M
