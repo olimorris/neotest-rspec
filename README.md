@@ -70,7 +70,13 @@ adapters = {
       })
     end,
     root_files = { "Gemfile", ".rspec", ".gitignore" },
-    filter_dirs = { ".git", "node_modules" }
+    filter_dirs = { ".git", "node_modules" },
+    transform_spec_path = function(path)
+      return path
+    end,
+    results_path = function()
+      return async.fn.tempname()
+    end
   }),
 }
 ```
@@ -131,7 +137,43 @@ require("neotest-rspec")({
 
 ### Running tests in a docker container
 
-Whilst not directly supported by neotest, but you can accomplish this using a shell script as your Rspec command. See [this comment](https://github.com/nvim-neotest/neotest/issues/89#issuecomment-1338141432) for an example.
+The following configuration overrides `rspec_cmd` to run a docker container
+(using docker-compose) and overrides `transform_spec_path` to pass the spec
+file as a relative path instead of an absolute path to rspec. The
+`results_path` needs to be set to a location which is available to both the
+container and the host.
+
+```lua
+require("neotest").setup({
+  adapters = {
+    require("neotest-rspec")({
+      rspec_cmd = function()
+        return vim.tbl_flatten({
+          "docker",
+          "compose",
+          "exec",
+          "-i",
+          "-w", "/app",
+          "-e", "RAILS_ENV=test",
+          "app",
+          "bundle",
+          "exec",
+          "rspec"
+        })
+      end,
+
+      transform_spec_path = function(path)
+        local prefix = require('neotest-rspec').root(path)
+        return string.sub(path, string.len(prefix) + 2, -1)
+      end,
+
+      results_path = "tmp/rspec.output"
+    })
+  }
+})
+```
+
+Alternatively, you can accomplish this using a shell script as your Rspec command. See [this comment](https://github.com/nvim-neotest/neotest/issues/89#issuecomment-1338141432) for an example.
 
 ## :rocket: Usage
 
