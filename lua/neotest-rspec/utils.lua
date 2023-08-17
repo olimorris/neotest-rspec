@@ -72,7 +72,7 @@ M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
         .. "[0m"
       tests[test_id].errors = {
         {
-          line = result.line_number,
+          line = result.line_number - 1,
           message = result.exception.message:gsub("     ", ""):gsub("%\n+", "  "),
         },
       }
