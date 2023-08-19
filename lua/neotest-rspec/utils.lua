@@ -18,6 +18,22 @@ local function replace_paths(str, what, with)
   return string.gsub(str, what, with)
 end
 
+local function find_error_line(output)
+  local backtrace = output.exception.backtrace
+  -- Remove the leading dot from the file_path
+  local file_path = string.sub(output.file_path, 2)
+  local line_number
+
+  for _, trace in ipairs(backtrace) do
+    if string.find(trace, file_path) then
+      line_number = tonumber(string.match(trace, ":(%d+):"))
+      break
+    end
+  end
+
+  return line_number
+end
+
 ---@param position neotest.Position The position to return an ID for
 ---@param namespace neotest.Position[] Any namespaces the position is within
 ---@return string
@@ -73,7 +89,7 @@ M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
 
       tests[test_id].errors = {
         {
-          line = result.line_number - 1,
+          line = (find_error_line(result) or result.line_number) - 1,
           message = result.exception.message:gsub("     ", ""):gsub("%\n+", "  "),
         },
       }
