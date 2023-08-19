@@ -1,7 +1,5 @@
 local ok, async = pcall(require, "nio")
-if not ok then
-  async = require("neotest.async")
-end
+if not ok then async = require("neotest.async") end
 
 local logger = require("neotest.logging")
 
@@ -52,14 +50,16 @@ M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
 
     logger.debug("RSpec ID:", { test_id })
 
-    if result.status == "pending" then
-      result.status = "skipped"
-    end
+    if result.status == "pending" then result.status = "skipped" end
 
     tests[test_id] = {
       status = result.status,
       short = string.upper(result.file_path) .. "\n-> " .. string.upper(result.status) .. " - " .. result.description,
-      testing_output = string.upper(result.file_path) .. "@@" .. string.upper(result.status) .. "@@" .. result.description,
+      testing_output = string.upper(result.file_path)
+        .. "@@"
+        .. string.upper(result.status)
+        .. "@@"
+        .. result.description,
       output_file = output_file,
     }
 
@@ -70,6 +70,7 @@ M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
         .. "\n   [31m  Failure/Error:\n"
         .. result.exception.message:gsub("\n", "\n\t")
         .. "[0m"
+
       tests[test_id].errors = {
         {
           line = result.line_number - 1,

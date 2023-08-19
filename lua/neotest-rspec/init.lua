@@ -122,9 +122,7 @@ function NeotestAdapter.build_spec(args)
 
   if position.type == "file" then run_by_filename() end
 
-  if position.type == "test" or position.type == "namespace"  then
-    run_by_line_number()
-  end
+  if position.type == "test" or position.type == "namespace" then run_by_line_number() end
 
   if position.type == "dir" and vim.bo.filetype == "neotest-summary" then run_by_filename() end
 
