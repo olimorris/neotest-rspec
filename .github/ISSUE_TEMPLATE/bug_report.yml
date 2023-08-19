@@ -76,16 +76,16 @@ body:
           > **Note:** You may need to do this a couple of times for Treesitter to fully download and sync
 
     - type: textarea
-      id: neotest-rspec-config
+      id: rspec-test
       attributes:
-        label: Your neotest-rspec config
-        description: Please paste your specific neotest-rspec config
+        label: RSpec test
+        description: Please share the RSpec test you're testing (optional)
         placeholder: |
-          ```lua
-          -- Your config here
+          ```ruby
+          -- RSpec test here
           ```
       validations:
-        required: true
+        required: false
 
     - type: textarea
       id: errors
@@ -98,16 +98,6 @@ body:
           ```
       validations:
         required: false
-
-    - type: textarea
-      id: rspec-test
-      attributes:
-        label: RSpec test
-        description: Please share the RSpec test you're testing (optional)
-        placeholder: |
-          ```ruby
-          -- RSpec test here
-          ```
 
     - type: textarea
       id: bug
