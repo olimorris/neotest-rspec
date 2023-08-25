@@ -1,9 +1,10 @@
 # neotest-rspec
 
 <!-- [![Tests](https://github.com/olimorris/neotest-rspec/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/olimorris/neotest-rspec/actions/workflows/ci.yml) -->
+
 This plugin provides an [RSpec](https://rspec.info) adapter for the [Neotest](https://github.com/nvim-neotest/neotest) framework.
 
-<img width="1502" alt="Neotest and RSPec" src="https://user-images.githubusercontent.com/9512444/174159395-d4dc5e1e-9c3c-449f-b235-6fc8835fed5b.png">
+<img width="1502" alt="Neotest and RSpec" src="https://user-images.githubusercontent.com/9512444/174159395-d4dc5e1e-9c3c-449f-b235-6fc8835fed5b.png">
 
 ## :package: Installation
 
@@ -135,13 +136,9 @@ require("neotest-rspec")({
 })
 ```
 
-### Running tests in a docker container
+### Running tests in a Docker container
 
-The following configuration overrides `rspec_cmd` to run a docker container
-(using docker-compose) and overrides `transform_spec_path` to pass the spec
-file as a relative path instead of an absolute path to rspec. The
-`results_path` needs to be set to a location which is available to both the
-container and the host.
+The following configuration overrides `rspec_cmd` to run a Docker container (using `docker-compose`) and overrides `transform_spec_path` to pass the spec file as a relative path instead of an absolute path to RSpec. The `results_path` needs to be set to a location which is available to both the container and the host.
 
 ```lua
 require("neotest").setup({
@@ -173,7 +170,7 @@ require("neotest").setup({
 })
 ```
 
-Alternatively, you can accomplish this using a shell script as your Rspec command. See [this comment](https://github.com/nvim-neotest/neotest/issues/89#issuecomment-1338141432) for an example.
+Alternatively, you can accomplish this using a shell script as your RSpec command. See [this comment](https://github.com/nvim-neotest/neotest/issues/89#issuecomment-1338141432) for an example.
 
 ## :rocket: Usage
 
@@ -205,4 +202,3 @@ To trigger the tests for the adapter, run:
 ```sh
 make test
 ```
-
