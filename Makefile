@@ -20,7 +20,7 @@ $(NEOTEST_DIR):
 	@rm -rf $(NEOTEST_DIR)/.git
 
 $(PLENARY_DIR):
-	git clone --depth=1 --no-single-branch https://github.com/nvim-lua/plenary.nvim $(PLENARY_DIR)
+	git clone --depth=1 --branch v0.1.3 https://github.com/nvim-lua/plenary.nvim $(PLENARY_DIR)
 	@rm -rf $(PLENARY_DIR)/.git
 
 $(TREESITTER_DIR):
