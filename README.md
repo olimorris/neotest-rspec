@@ -55,7 +55,8 @@ use({
 
 ### Default configuration
 
-> **Note**: You only need to the call the `setup` function if you wish to change any of the defaults
+> [!NOTE]
+> You only need to the call the `setup` function if you wish to change any of the defaults
 
 <details>
   <summary>Click to see the default configuration</summary>
@@ -174,7 +175,8 @@ Alternatively, you can accomplish this using a shell script as your RSpec comman
 
 ## :rocket: Usage
 
-> **Note**: All usages of `require("neotest").run.run` can be mapped to a command in your config
+> [!IMPORTANT]
+> In order for the adapter to work, your RSpec tests must end in `_spec.rb`
 
 #### Test single function
 
