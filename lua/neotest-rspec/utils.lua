@@ -57,11 +57,12 @@ M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
   local tests = {}
 
   for _, result in pairs(parsed_rspec_json.examples) do
+    local file_path = string.gsub(result.id, "(.+)%[.+%]", "%1")
     local test_id
     if engine_name then
-      test_id = "./" .. engine_name .. string.sub(result.file_path, 2) .. separator .. result.line_number
+      test_id = "./" .. engine_name .. string.sub(file_path, 2) .. separator .. result.line_number
     else
-      test_id = result.file_path .. separator .. result.line_number
+      test_id = file_path .. separator .. result.line_number
     end
 
     logger.debug("RSpec ID:", { test_id })
@@ -70,8 +71,8 @@ M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
 
     tests[test_id] = {
       status = result.status,
-      short = string.upper(result.file_path) .. "\n-> " .. string.upper(result.status) .. " - " .. result.description,
-      testing_output = string.upper(result.file_path)
+      short = string.upper(file_path) .. "\n-> " .. string.upper(result.status) .. " - " .. result.description,
+      testing_output = string.upper(file_path)
         .. "@@"
         .. string.upper(result.status)
         .. "@@"
