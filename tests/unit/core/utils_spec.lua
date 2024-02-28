@@ -72,4 +72,31 @@ describe("parse_json_output", function()
 
     assert.are.same(expected_output, utils.parse_json_output(parsed_rspec_json, "/tmp/nvimhYaIPj/3", "engine_name"))
   end)
+
+  it("works with included examples", function()
+    local parsed_rspec_json = {
+      examples = {
+        {
+          id = "./spec/included_examples/included_examples_spec.rb[1:1:1]",
+          description = "adds two numbers together",
+          full_description = "Included Examples behaves like to be included adds two numbers together",
+          status = "passed",
+          file_path = "./spec/included_examples/shared_examples.rb",
+          line_number = 2,
+          run_time = 0.002228,
+        },
+      },
+    }
+
+    local expected_output = {
+      ["./spec/included_examples/included_examples_spec.rb::2"] = {
+        output_file = "/tmp/nvimhYaIPj/3",
+        short = "./SPEC/INCLUDED_EXAMPLES/INCLUDED_EXAMPLES_SPEC.RB\n-> PASSED - adds two numbers together",
+        status = "passed",
+        testing_output = "./SPEC/INCLUDED_EXAMPLES/INCLUDED_EXAMPLES_SPEC.RB@@PASSED@@adds two numbers together",
+      },
+    }
+
+    assert.are.same(expected_output, utils.parse_json_output(parsed_rspec_json, "/tmp/nvimhYaIPj/3"))
+  end)
 end)
