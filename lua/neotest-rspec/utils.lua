@@ -58,6 +58,10 @@ M.parse_json_output = function(parsed_rspec_json, output_file, engine_name)
 
   for _, result in pairs(parsed_rspec_json.examples) do
     local file_path = string.gsub(result.id, "(.+)%[.+%]", "%1")
+    if string.match(file_path, "^/") then
+      file_path = "." .. file_path
+    end
+
     local test_id
     if engine_name then
       test_id = "./" .. engine_name .. string.sub(file_path, 2) .. separator .. result.line_number
