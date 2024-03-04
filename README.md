@@ -91,7 +91,11 @@ The command used to run tests can be changed via the `rspec_cmd` option:
 
 ```lua
 require("neotest-rspec")({
-  rspec_cmd = function()
+  -- Optionally your function can take a position_type which is one of:
+  -- - "file"
+  -- - "test"
+  -- - "dir"
+  rspec_cmd = function(position_type)
     return vim.tbl_flatten({
       "bundle",
       "exec",
