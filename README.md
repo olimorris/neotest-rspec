@@ -91,11 +91,7 @@ The command used to run tests can be changed via the `rspec_cmd` option:
 
 ```lua
 require("neotest-rspec")({
-  -- Optionally your function can take a position_type which is one of:
-  -- - "file"
-  -- - "test"
-  -- - "dir"
-  rspec_cmd = function(position_type)
+  rspec_cmd = function()
     return vim.tbl_flatten({
       "bundle",
       "exec",
@@ -104,6 +100,57 @@ require("neotest-rspec")({
   end
 })
 ```
+
+One issue you can run into is when you use generated tests:
+
+```ruby
+RSpec.describe SomeClass do
+  describe "some feature" do
+    FIXTURES.each do |method, path|
+      it "does something with the #{method} and #{path}" do
+        # ...
+      end
+    end
+  end
+end
+```
+
+The test will show as passing if any one of the tests pass instead of if all of
+them pass. You can change the test command to use `--fail-fast` to fix this.
+However now your other tests will all fail if even a single test fails.
+
+To solve this you can customize your command depending on the type of test you
+are running by using the optional positional argument `position_type`
+
+
+```lua
+require("neotest-rspec")({
+  -- Optionally your function can take a position_type which is one of:
+  -- - "file"
+  -- - "test"
+  -- - "dir"
+  rspec_cmd = function(position_type)
+    if position_type == "test" then
+      return vim.tbl_flatten({
+        "bundle",
+        "exec",
+        "rspec",
+        "--fail-fast"
+      })
+    else
+      return vim.tbl_flatten({
+        "bundle",
+        "exec",
+        "rspec",
+      })
+    end
+ end
+})
+```
+
+Now when you run your tests from a single test it will fail fast and show the
+correct error on your generated tests. When you run the whole file it won't fail
+fast and a single error won't cause all your other tests to fail.
 
 ### Setting the root directory
 
