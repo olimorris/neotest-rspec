@@ -127,7 +127,7 @@ function NeotestAdapter.build_spec(args)
   if position.type == "dir" and vim.bo.filetype == "neotest-summary" then run_by_filename() end
 
   local command = vim.tbl_flatten({
-    config.get_rspec_cmd(),
+    config.get_rspec_cmd(position.type),
     script_args,
   })
 
