@@ -3,6 +3,7 @@ vim.bo.swapfile = false
 
 vim.cmd([[set runtimepath+=.]])
 vim.cmd([[set runtimepath+=./misc/neotest]])
+vim.cmd([[set runtimepath+=./misc/nio]])
 vim.cmd([[set runtimepath+=./misc/plenary]])
 vim.cmd([[set runtimepath+=./misc/treesitter]])
 
