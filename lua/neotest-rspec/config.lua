@@ -13,7 +13,7 @@ M.get_root_files = function()
 end
 
 M.get_filter_dirs = function()
-  return { ".git", "node_modules" }
+  return { ".git", "node_modules", "tmp" }
 end
 
 M.transform_spec_path = function(path)
