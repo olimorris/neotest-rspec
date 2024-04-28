@@ -52,9 +52,14 @@ body:
               "nvim-neotest/neotest",
               lazy = true,
               dependencies = {
+                "nvim-neotest/nvim-nio",
+                "nvim-lua/plenary.nvim",
+                "antoinemadec/FixCursorHold.nvim",
+                "nvim-treesitter/nvim-treesitter",
                 "olimorris/neotest-rspec",
               },
               config = function()
+                log_level = vim.log.levels.DEBUG,
                 require("neotest").setup({
                   adapters = {
                     require("neotest-rspec"),
@@ -98,6 +103,20 @@ body:
           ```
       validations:
         required: false
+
+    - type: textarea
+      id: logs
+      attributes:
+        label: Neotest logs
+        description: |
+          1. Wipe the `neotest.log` file in `stdpath("log")` or `stdpath("data")`.
+          2. Ensure `log_level = vim.log.levels.DEBUG` is set in your minimal config.
+          3. Reproduce the issue.
+          4. Provide the new logs.
+        placeholder: |
+          ### Neotest logs
+      validations:
+        required: true
 
     - type: textarea
       id: bug
