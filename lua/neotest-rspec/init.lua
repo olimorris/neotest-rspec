@@ -61,18 +61,18 @@ function NeotestAdapter.discover_positions(path)
     )) @namespace.definition
 
     ((call
-      method: (identifier) @func_name (#match? @func_name "^(it|specify)$")
+      method: (identifier) @func_name (#match? @func_name "^(it|its|specify)$")
       block: (block (_) @test.name)
     )) @test.definition
 
     ((call
-      method: (identifier) @func_name (#match? @func_name "^(it|specify)$")
+      method: (identifier) @func_name (#match? @func_name "^(it|its|specify)$")
       block: (do_block (_) @test.name)
       !arguments
     )) @test.definition
 
     ((call
-      method: (identifier) @func_name (#match? @func_name "^(it|scenario|it_behaves_like)$")
+      method: (identifier) @func_name (#match? @func_name "^(it|its|scenario|it_behaves_like)$")
       arguments: (argument_list (_) @test.name)
     )) @test.definition
   ]]
