@@ -246,6 +246,16 @@ To test a directory run `require("neotest").run.run("path/to/directory")`
 To test the full test suite run `require("neotest").run.run("path/to/root_project")`
 e.g. `require("neotest").run.run(vim.fn.getcwd())`, presuming that vim's directory is the same as the project root.
 
+#### Debug test
+
+In order to enable DAP for a test or test suite, ensure that [nvim-dap](https://github.com/mfussenegger/nvim-dap) and [nvim-dap-ruby](https://github.com/suketa/nvim-dap-ruby) are installed and follow the [strategies](https://github.com/nvim-neotest/neotest?tab=readme-ov-file#strategies) docs. An example snippet can be found below.
+
+```lua
+require("neotest").run.run({ strategy = "dap" })
+```
+
+This will run the closest test under DAP.
+
 ## :gift: Contributing
 
 This project is maintained by the Neovim Ruby community. Please raise a PR if you are interested in adding new functionality or fixing any bugs. When submitting a bug, please include an example spec that can be tested.
