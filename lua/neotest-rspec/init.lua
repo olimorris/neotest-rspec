@@ -120,6 +120,23 @@ function NeotestAdapter.build_spec(args)
     )
   end
 
+  local function get_strategy_config(strategy, command, cwd)
+    local strategy_config = {
+      dap = function()
+        return {
+          name = "Debug RSpec Tests",
+          type = "ruby",
+          args = { unpack(command, 2) },
+          command = command[1],
+          cwd = cwd or "${workspaceFolder}",
+          current_line = true,
+          random_port = true,
+        }
+      end,
+    }
+    if strategy_config[strategy] then return strategy_config[strategy]() end
+  end
+
   if position.type == "file" then run_by_filename() end
 
   if position.type == "test" or position.type == "namespace" then run_by_line_number() end
@@ -138,6 +155,7 @@ function NeotestAdapter.build_spec(args)
       results_path = results_path,
       engine_name = engine_name,
     },
+    strategy = get_strategy_config(args.strategy, command, engine_name),
   }
 end
 
