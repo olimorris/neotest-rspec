@@ -11,6 +11,9 @@ M.get_strategy_config = function(strategy, command, cwd)
         cwd = cwd or "${workspaceFolder}",
         current_line = true,
         random_port = true,
+        request = "attach",
+        error_on_failure = false,
+        localfs = true,
       }
     end,
   }
