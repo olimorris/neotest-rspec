@@ -1,5 +1,22 @@
 local M = {}
 
+M.get_strategy_config = function(strategy, command, cwd)
+  local strategy_config = {
+    dap = function()
+      return {
+        name = "Debug RSpec Tests",
+        type = "ruby",
+        args = { unpack(command, 2) },
+        command = command[1],
+        cwd = cwd or "${workspaceFolder}",
+        current_line = true,
+        random_port = true,
+      }
+    end,
+  }
+  if strategy_config[strategy] then return strategy_config[strategy]() end
+end
+
 M.get_rspec_cmd = function()
   return vim.tbl_flatten({
     "bundle",
