@@ -213,6 +213,13 @@ setmetatable(NeotestAdapter, {
         return opts.results_path
       end
     end
+    if is_callable(opts.strategy_config) then
+      config.get_strategy_config = opts.strategy_config
+    elseif opts.strategy_config then
+      config.get_strategy_config = function()
+        return opts.strategy_config
+      end
+    end
     return NeotestAdapter
   end,
 })
