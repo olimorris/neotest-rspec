@@ -120,7 +120,7 @@ function NeotestAdapter.build_spec(args)
     )
   end
 
-  local function get_strategy_config(strategy, command, cwd)
+  local function default_get_strategy_config(strategy, command, cwd)
     local strategy_config = {
       dap = function()
         return {
@@ -136,6 +136,8 @@ function NeotestAdapter.build_spec(args)
     }
     if strategy_config[strategy] then return strategy_config[strategy]() end
   end
+
+  local get_strategy_config = config and config.get_strategy_config or default_get_strategy_config
 
   if position.type == "file" then run_by_filename() end
 
