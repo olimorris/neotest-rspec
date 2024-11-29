@@ -50,12 +50,12 @@ end
 function NeotestAdapter.discover_positions(path)
   local query = [[
     ((call
-      method: (identifier) @func_name (#match? @func_name "^(describe|context|feature)$")
+      method: (identifier) @func_name (#match? @func_name "^(describe|shared_examples|context|feature)$")
       arguments: (argument_list (_) @namespace.name)
     )) @namespace.definition
 
     ((call
-      method: (identifier) @namespace.name (#match? @namespace.name "^(describe|context|feature)$")
+      method: (identifier) @namespace.name (#match? @namespace.name "^(describe|shared_examples|context|feature)$")
       .
       block: (_)
     )) @namespace.definition
