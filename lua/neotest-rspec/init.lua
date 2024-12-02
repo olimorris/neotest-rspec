@@ -84,6 +84,18 @@ function NeotestAdapter.discover_positions(path)
   })
 end
 
+local function get_formatter_path()
+  -- Get the directory of the current init.lua file
+  local plugin_root =
+    vim.fn.fnamemodify(vim.api.nvim_get_runtime_file("lua/neotest-rspec/init.lua", false)[1], ":h:h:h")
+
+  -- Construct the path to formatter.rb
+  local formatter_path = plugin_root .. "/neotest_formatter.rb"
+
+  -- Return the absolute path
+  return vim.fn.resolve(formatter_path)
+end
+
 ---@param args neotest.RunArgs
 ---@return neotest.RunSpec | nil
 function NeotestAdapter.build_spec(args)
@@ -98,9 +110,13 @@ function NeotestAdapter.build_spec(args)
   if match and match ~= 0 then engine_name = string.sub(path, 0, match - 1) end
   local results_path = config.results_path()
 
+  local formatter_path = get_formatter_path()
+
   local script_args = vim.tbl_flatten({
+    "--require",
+    formatter_path,
     "-f",
-    "json",
+    "NeotestFormatter",
     "-o",
     results_path,
     "-f",
