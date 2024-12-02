@@ -72,7 +72,7 @@ function NeotestAdapter.discover_positions(path)
     )) @test.definition
 
     ((call
-      method: (identifier) @func_name (#match? @func_name "^(it|its|scenario|it_behaves_like)$")
+      method: (identifier) @func_name (#match? @func_name "^(it|its|scenario|include_examples|it_behaves_like)$")
       arguments: (argument_list (_) @test.name)
     )) @test.definition
   ]]
