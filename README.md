@@ -78,6 +78,9 @@ adapters = {
     end,
     results_path = function()
       return async.fn.tempname()
+    end,
+    formatter = function()
+      return "NeotestFormatter"
     end
   }),
 }
@@ -190,7 +193,7 @@ require("neotest-rspec")({
 
 ### Running tests in a Docker container
 
-The following configuration overrides `rspec_cmd` to run a Docker container (using `docker-compose`) and overrides `transform_spec_path` to pass the spec file as a relative path instead of an absolute path to RSpec. The `results_path` needs to be set to a location which is available to both the container and the host.
+The following configuration overrides `rspec_cmd` to run a Docker container (using `docker-compose`) and overrides `transform_spec_path` to pass the spec file as a relative path instead of an absolute path to RSpec. The `results_path` needs to be set to a location which is available to both the container and the host. Additionally, to avoid using a custom formatter, you need to specify `formatter = "json"`.
 
 ```lua
 require("neotest").setup({
@@ -216,7 +219,8 @@ require("neotest").setup({
         return string.sub(path, string.len(prefix) + 2, -1)
       end,
 
-      results_path = "tmp/rspec.output"
+      results_path = "tmp/rspec.output",
+      formatter = "json"
     })
   }
 })
