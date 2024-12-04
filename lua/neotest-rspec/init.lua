@@ -111,17 +111,24 @@ function NeotestAdapter.build_spec(args)
   local results_path = config.results_path()
 
   local formatter_path = get_formatter_path()
+  local formatter = config.formatter()
 
-  local script_args = vim.tbl_flatten({
-    "--require",
-    formatter_path,
+  local script_args = {
     "-f",
-    "NeotestFormatter",
+    formatter,
     "-o",
     results_path,
     "-f",
     "progress",
-  })
+  }
+
+  if formatter == "NeotestFormatter" then
+    script_args = vim.tbl_flatten({
+      "--require",
+      formatter_path,
+      script_args,
+    })
+  end
 
   local function run_by_filename()
     table.insert(script_args, spec_path)
@@ -244,6 +251,13 @@ setmetatable(NeotestAdapter, {
     elseif opts.results_path then
       config.results_path = function()
         return opts.results_path
+      end
+    end
+    if is_callable(opts.formatter) then
+      config.formatter = opts.formatter
+    elseif opts.formatter then
+      config.formatter = function()
+        return opts.formatter
       end
     end
     return NeotestAdapter

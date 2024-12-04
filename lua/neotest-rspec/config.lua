@@ -24,4 +24,8 @@ M.results_path = function()
   return require("neotest.async").fn.tempname()
 end
 
+M.formatter = function()
+  return "NeotestFormatter"
+end
+
 return M
