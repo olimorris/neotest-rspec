@@ -154,6 +154,10 @@ function NeotestAdapter.build_spec(args)
           cwd = cwd or "${workspaceFolder}",
           current_line = true,
           random_port = true,
+          request = "attach",
+          error_on_failure = false, -- prevent nvim-dap-ruby from notifying user of exit code 1 from a test with failures.
+          localfs = true,
+          waiting = 1000,
         }
       end,
     }
