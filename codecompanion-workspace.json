@@ -1,0 +1,54 @@
+{
+  "name": "neotest-rspec",
+  "version": "1.0.0",
+  "system_prompt": "You are an AI assistant helping with neotest-rspec, a Neovim plugin that enables running RSpec tests through the Neotest framework. neotest-rspec is an adapter that integrates RSpec testing with Neotest in Neovim.",
+  "groups": [
+    {
+      "name": "Core Functionality",
+      "system_prompt": "This group contains the core files that implement the main adapter functionality, handling test discovery, running tests, and processing results.",
+      "data": ["init_module", "utils_module", "config_module"]
+    },
+    {
+      "name": "Configuration",
+      "system_prompt": "This group contains configuration-related files that define how the adapter behaves and interacts with RSpec.",
+      "data": ["config_module"]
+    },
+    {
+      "name": "Consumers",
+      "system_prompt": "This group contains consumer-related files that interact with Neotest to display and process test results.",
+      "data": ["adapter_testing_module"]
+    },
+    {
+      "name": "Documentation",
+      "system_prompt": "This group contains documentation about Neotest and how adapters work with it.",
+      "data": ["neotest_readme"]
+    }
+  ],
+  "data": {
+    "init_module": {
+      "type": "file",
+      "path": "lua/neotest-rspec/init.lua",
+      "description": "Main adapter implementation file that defines the adapter interface, root detection, test discovery, command building, and results parsing."
+    },
+    "utils_module": {
+      "type": "file",
+      "path": "lua/neotest-rspec/utils.lua",
+      "description": "Utility functions for the adapter, including ID generation and JSON output parsing."
+    },
+    "config_module": {
+      "type": "file",
+      "path": "lua/neotest-rspec/config.lua",
+      "description": "Configuration defaults for the adapter, including RSpec command, root files, filter directories, etc."
+    },
+    "adapter_testing_module": {
+      "type": "file",
+      "path": "lua/neotest-rspec/consumers/adapter_testing.lua",
+      "description": "Testing utilities for the adapter."
+    },
+    "neotest_readme": {
+      "type": "url",
+      "path": "https://raw.githubusercontent.com/nvim-neotest/neotest/refs/heads/master/README.md",
+      "description": "Neotest framework documentation that explains how adapters work and integrate with Neotest."
+    }
+  }
+}
