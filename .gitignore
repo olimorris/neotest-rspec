@@ -44,3 +44,4 @@ misc
 test_output.txt
 output.json
 .luarc.json
+chroma.log
