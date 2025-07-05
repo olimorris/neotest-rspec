@@ -28,4 +28,16 @@ M.formatter = function()
   return "NeotestFormatter"
 end
 
+M.formatter_path = function()
+  -- Get the directory of the current init.lua file
+  local plugin_root =
+    vim.fn.fnamemodify(vim.api.nvim_get_runtime_file("lua/neotest-rspec/init.lua", false)[1], ":h:h:h")
+
+  -- Construct the path to formatter.rb
+  local formatter_path = plugin_root .. "/neotest_formatter.rb"
+
+  -- Return the absolute path
+  return vim.fn.resolve(formatter_path)
+end
+
 return M
