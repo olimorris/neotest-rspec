@@ -105,9 +105,12 @@ function NeotestAdapter.build_spec(args)
   local spec_path = config.transform_spec_path(position.path)
   local path = vim.fn.fnamemodify(async.fn.expand("%"), ":.")
 
-  -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
-  local match = vim.regex("spec/"):match_str(path)
-  if match and match ~= 0 then engine_name = string.sub(path, 0, match - 1) end
+  if config.engine_support then
+    -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
+    local match = vim.regex("spec/"):match_str(path)
+    if match and match ~= 0 then engine_name = string.sub(path, 0, match - 1) end
+  end
+
   local results_path = config.results_path()
 
   local formatter_path = get_formatter_path()
@@ -256,6 +259,9 @@ setmetatable(NeotestAdapter, {
       config.results_path = function()
         return opts.results_path
       end
+    end
+    if opts.engine_support ~= nil then
+      config.engine_support = opts.engine_support
     end
     if is_callable(opts.formatter) then
       config.formatter = opts.formatter

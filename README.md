@@ -76,6 +76,7 @@ adapters = {
     transform_spec_path = function(path)
       return path
     end,
+    engine_support = true,
     results_path = function()
       return async.fn.tempname()
     end,
@@ -188,6 +189,18 @@ You can even set `filter_dirs` with a function which returns a table:
 ```lua
 require("neotest-rspec")({
   filter_dirs = function() return { "my_custom_dir" } end
+})
+```
+
+### Running engine tests
+
+By default, the adapter will run specs from the directory that contains the `spec/` directory. This means that nested engines' specs will be run in an isolated way from within the engine.
+
+You can opt out of this behaviour and always run specs from the project root:
+
+```lua
+require("neotest-rspec")({
+  engine_support = false
 })
 ```
 
