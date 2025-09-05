@@ -9,6 +9,12 @@ local function assert_skipped(reason)
 end
 
 local function for_each_test_file(test, callback)
+  -- If given a full relative path, use it directly
+  local test_path = Path:new(cwd, test):absolute()
+  if vim.loop.fs_stat(test_path) then
+    callback(test_path)
+    return
+  end
   local files = scandir.scan_dir(Path:new(cwd, "spec"):absolute())
   for _, file in pairs(files) do
     if string.match(file, test) then

@@ -93,7 +93,7 @@ local function get_formatter_path()
   local formatter_path = plugin_root .. "/neotest_formatter.rb"
 
   -- Return the absolute path
-  return vim.fn.resolve(formatter_path)
+  return vim.fn.fnamemodify(formatter_path, ":p")
 end
 
 ---@param args neotest.RunArgs
@@ -103,7 +103,7 @@ function NeotestAdapter.build_spec(args)
   local engine_name = nil
 
   local spec_path = config.transform_spec_path(position.path)
-  local path = async.fn.expand("%")
+  local path = vim.fn.fnamemodify(async.fn.expand("%"), ":.")
 
   -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
   local match = vim.regex("spec/"):match_str(path)
