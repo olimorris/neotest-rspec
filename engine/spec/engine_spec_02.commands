@@ -1,0 +1,3 @@
+:lua require("neotest-rspec")({engine_support=false})
+:1
+:lua require("neotest").run.run()

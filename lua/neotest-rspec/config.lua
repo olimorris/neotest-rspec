@@ -20,6 +20,8 @@ M.transform_spec_path = function(path)
   return path
 end
 
+M.engine_support = true
+
 M.results_path = function()
   return require("neotest.async").fn.tempname()
 end
