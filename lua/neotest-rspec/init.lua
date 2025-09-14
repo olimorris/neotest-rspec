@@ -1,5 +1,4 @@
 local lib = require("neotest.lib")
-local async = require("neotest.async")
 local logger = require("neotest.logging")
 local utils = require("neotest-rspec.utils")
 local config = require("neotest-rspec.config")
@@ -103,12 +102,12 @@ function NeotestAdapter.build_spec(args)
   local engine_name = nil
 
   local spec_path = config.transform_spec_path(position.path)
-  local path = vim.fn.fnamemodify(async.fn.expand("%"), ":.")
 
   if config.engine_support then
+    local relative_path = vim.fn.fnamemodify(spec_path, ":.")
     -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
-    local match = vim.regex("spec/"):match_str(path)
-    if match and match ~= 0 then engine_name = string.sub(path, 0, match - 1) end
+    local match = vim.regex("spec/"):match_str(relative_path)
+    if match and match ~= 0 then engine_name = string.sub(relative_path, 0, match - 1) end
   end
 
   local results_path = config.results_path()
