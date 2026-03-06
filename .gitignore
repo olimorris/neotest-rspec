@@ -40,7 +40,7 @@ luac.out
 *.hex
 
 # Others
-misc
+deps
 test_output.txt
 output.json
 .luarc.json

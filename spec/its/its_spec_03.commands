@@ -1,2 +1,0 @@
-:18
-:lua require("neotest").run.run()

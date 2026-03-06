@@ -46,7 +46,9 @@ function M.describe(describing, name)
       for_each_command(test, function(command)
         it(string.format("(file: %s)", command), function()
           local expected = test_utils.get_contents(string.format("%s.expected", command))
-          if not expected then return assert_skipped("Could not find expected output file") end
+          if not expected then
+            return assert_skipped("Could not find expected output file")
+          end
 
           local co = coroutine.running()
           vim.defer_fn(function()

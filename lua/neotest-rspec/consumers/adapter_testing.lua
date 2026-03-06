@@ -1,5 +1,3 @@
-local cwd = vim.loop.cwd()
-
 local neotest = {}
 neotest.adapter_testing = {}
 
