@@ -6,11 +6,11 @@ local new_set = MiniTest.new_set
 local child = MiniTest.new_child_neovim()
 local T = new_set({
   hooks = {
-    pre_case = function()
+    pre_once = function()
       h.child_start(child)
       child.lua([[vim.cmd(':e tests/stubs/its/its_spec.rb')]])
     end,
-    post_case = function()
+    pre_case = function()
       child.lua([[TEST_OUTPUT = nil]])
     end,
     post_once = child.stop,
@@ -23,7 +23,7 @@ T["its"]["runs hash access with symbol key at line 8"] = function()
   child.lua([[
     vim.cmd(':8')
     require("neotest").run.run()
-    vim.wait(10000, function() return TEST_OUTPUT ~= nil end)
+    vim.wait(]] .. h.timeout .. [[, function() return TEST_OUTPUT ~= nil end)
   ]])
 
   local output = child.lua_get([[TEST_OUTPUT]])
@@ -34,7 +34,7 @@ T["its"]["runs hash access with do block at line 11"] = function()
   child.lua([[
     vim.cmd(':11')
     require("neotest").run.run()
-    vim.wait(10000, function() return TEST_OUTPUT ~= nil end)
+    vim.wait(]] .. h.timeout .. [[, function() return TEST_OUTPUT ~= nil end)
   ]])
 
   local output = child.lua_get([[TEST_OUTPUT]])
@@ -45,7 +45,7 @@ T["its"]["runs object access with symbol at line 18"] = function()
   child.lua([[
     vim.cmd(':18')
     require("neotest").run.run()
-    vim.wait(10000, function() return TEST_OUTPUT ~= nil end)
+    vim.wait(]] .. h.timeout .. [[, function() return TEST_OUTPUT ~= nil end)
   ]])
 
   local output = child.lua_get([[TEST_OUTPUT]])
@@ -56,7 +56,7 @@ T["its"]["runs object access with do block at line 20"] = function()
   child.lua([[
     vim.cmd(':20')
     require("neotest").run.run()
-    vim.wait(10000, function() return TEST_OUTPUT ~= nil end)
+    vim.wait(]] .. h.timeout .. [[, function() return TEST_OUTPUT ~= nil end)
   ]])
 
   local output = child.lua_get([[TEST_OUTPUT]])
@@ -67,7 +67,7 @@ T["its"]["runs object access with string at line 24"] = function()
   child.lua([[
     vim.cmd(':24')
     require("neotest").run.run()
-    vim.wait(10000, function() return TEST_OUTPUT ~= nil end)
+    vim.wait(]] .. h.timeout .. [[, function() return TEST_OUTPUT ~= nil end)
   ]])
 
   local output = child.lua_get([[TEST_OUTPUT]])

@@ -6,11 +6,11 @@ local new_set = MiniTest.new_set
 local child = MiniTest.new_child_neovim()
 local T = new_set({
   hooks = {
-    pre_case = function()
+    pre_once = function()
       h.child_start(child)
       child.lua([[vim.cmd(':e engine/spec/engine_spec.rb')]])
     end,
-    post_case = function()
+    pre_case = function()
       child.lua([[TEST_OUTPUT = nil]])
     end,
     post_once = child.stop,
@@ -23,7 +23,7 @@ T["engine"]["runs specs from the engine root"] = function()
   child.lua([[
     vim.cmd(':1')
     require("neotest").run.run()
-    vim.wait(10000, function() return TEST_OUTPUT ~= nil end)
+    vim.wait(]] .. h.timeout .. [[, function() return TEST_OUTPUT ~= nil end)
   ]])
 
   local output = child.lua_get([[TEST_OUTPUT]])
@@ -35,7 +35,7 @@ T["engine"]["fails when engine support is disabled"] = function()
     vim.cmd(':lua require("neotest-rspec")({engine_support=false})')
     vim.cmd(':1')
     require("neotest").run.run()
-    vim.wait(10000, function() return TEST_OUTPUT ~= nil end)
+    vim.wait(]] .. h.timeout .. [[, function() return TEST_OUTPUT ~= nil end)
   ]])
 
   local output = child.lua_get([[TEST_OUTPUT]])
