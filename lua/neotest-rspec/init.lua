@@ -125,7 +125,7 @@ function NeotestAdapter.build_spec(args)
   }
 
   if formatter == "NeotestFormatter" then
-    script_args = vim.tbl_flatten({
+    script_args = utils.tbl_flatten({
       "--require",
       formatter_path,
       script_args,
@@ -139,7 +139,7 @@ function NeotestAdapter.build_spec(args)
   local function run_by_line_number()
     table.insert(
       script_args,
-      vim.tbl_flatten({
+      utils.tbl_flatten({
         spec_path .. ":" .. tonumber(position.range[1] + 1),
       })
     )
@@ -172,9 +172,9 @@ function NeotestAdapter.build_spec(args)
 
   if position.type == "dir" and vim.bo.filetype == "neotest-summary" then run_by_filename() end
 
-  local command = vim.tbl_flatten({
+  local command = utils.tbl_flatten({
     config.get_rspec_cmd(position.type),
-    script_args,
+    utils.tbl_flatten(script_args),
   })
 
   return {

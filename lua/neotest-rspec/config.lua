@@ -1,7 +1,9 @@
+local utils = require("neotest-rspec.utils")
+
 local M = {}
 
 M.get_rspec_cmd = function()
-  return vim.tbl_flatten({
+  return utils.tbl_flatten({
     "bundle",
     "exec",
     "rspec",
