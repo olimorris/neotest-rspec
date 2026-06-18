@@ -18,6 +18,13 @@ local function replace_paths(str, what, with)
   return string.gsub(str, what, with)
 end
 
+---@param tbl table
+---@return table
+function M.tbl_flatten(tbl)
+  ---@diagnostic disable-next-line: deprecated
+  return vim.iter and vim.iter(tbl):flatten():totable() or vim.tbl_flatten(tbl)
+end
+
 local function find_error_line(output)
   local backtrace = output.exception.backtrace
   -- Remove the leading dot from the file_path
