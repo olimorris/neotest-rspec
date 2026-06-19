@@ -1,7 +1,7 @@
+local config = require("neotest-rspec.config")
 local lib = require("neotest.lib")
 local logger = require("neotest.logging")
 local utils = require("neotest-rspec.utils")
-local config = require("neotest-rspec.config")
 
 ---@class neotest.Adapter
 ---@field name string
@@ -17,7 +17,9 @@ function NeotestAdapter.root(dir)
 
   for _, root_file in ipairs(config.get_root_files()) do
     result = lib.files.match_root_pattern(root_file)(dir)
-    if result then break end
+    if result then
+      break
+    end
   end
 
   return result
@@ -36,7 +38,9 @@ end
 ---@return boolean
 function NeotestAdapter.filter_dir(name)
   for _, filter_dir in ipairs(config.get_filter_dirs()) do
-    if name == filter_dir then return false end
+    if name == filter_dir then
+      return false
+    end
   end
 
   return true
@@ -107,7 +111,9 @@ function NeotestAdapter.build_spec(args)
     local relative_path = vim.fn.fnamemodify(spec_path, ":.")
     -- if the path starts with spec, it's a normal test. Otherwise, it's an engine test
     local match = vim.regex("spec/"):match_str(relative_path)
-    if match and match ~= 0 then engine_name = string.sub(relative_path, 0, match - 1) end
+    if match and match ~= 0 then
+      engine_name = string.sub(relative_path, 0, match - 1)
+    end
   end
 
   local results_path = config.results_path()
@@ -163,14 +169,22 @@ function NeotestAdapter.build_spec(args)
         }
       end,
     }
-    if strategy_config[strategy] then return strategy_config[strategy]() end
+    if strategy_config[strategy] then
+      return strategy_config[strategy]()
+    end
   end
 
-  if position.type == "file" then run_by_filename() end
+  if position.type == "file" then
+    run_by_filename()
+  end
 
-  if position.type == "test" or position.type == "namespace" then run_by_line_number() end
+  if position.type == "test" or position.type == "namespace" then
+    run_by_line_number()
+  end
 
-  if position.type == "dir" and vim.bo.filetype == "neotest-summary" then run_by_filename() end
+  if position.type == "dir" and vim.bo.filetype == "neotest-summary" then
+    run_by_filename()
+  end
 
   local command = utils.tbl_flatten({
     config.get_rspec_cmd(position.type),

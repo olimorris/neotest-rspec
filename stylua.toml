@@ -1,5 +1,10 @@
 column_width = 120
-indent_type = 'Spaces'
+indent_type = "Spaces"
 indent_width = 2
+line_endings = "Unix"
+quote_style = "AutoPreferDouble"
 no_call_parentheses = false
-collapse_simple_statement = "ConditionalOnly"
+syntax = "Lua52"
+
+[sort_requires]
+enabled = true

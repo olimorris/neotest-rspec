@@ -1,33 +1,44 @@
-NEOTEST_DIR = misc/neotest
-NIO_DIR = misc/nio
-PLENARY_DIR = misc/plenary
-TREESITTER_DIR = misc/treesitter
-TEST_DIR = tests/unit
+all: format test
 
-test: test_core test_rspec
+check:
+	@echo Checking...
+	stylua --check lua/ tests/ -f ./stylua.toml
 
-test_core: $(NEOTEST_DIR) $(NIO_DIR) $(PLENARY_DIR) $(TREESITTER_DIR)
-	nvim --headless --clean \
-	-u tests/minimal_init.lua \
-	-c "PlenaryBustedDirectory $(TEST_DIR)/core { minimal_init = 'tests/minimal_init.lua' }"
+format:
+	@echo Formatting...
+	@stylua tests/ lua/ -f ./stylua.toml
 
-test_rspec: $(NEOTEST_DIR) $(NIO_DIR) $(PLENARY_DIR) $(TREESITTER_DIR)
-	nvim --headless --clean \
-	-u tests/minimal_init.lua \
-	-c "PlenaryBustedDirectory $(TEST_DIR)/rspec { minimal_init = 'tests/minimal_init.lua' }"
+test: deps
+	@echo Testing...
+	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run()"
 
-$(NEOTEST_DIR):
-	git clone --depth=1 --no-single-branch https://github.com/nvim-neotest/neotest $(NEOTEST_DIR)
-	@rm -rf $(NEOTEST_DIR)/.git
+test_file: deps
+	@echo Testing File...
+	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run_file('$(FILE)')"
 
-$(NIO_DIR):
-	git clone --depth=1 --no-single-branch https://github.com/nvim-neotest/nvim-nio $(NIO_DIR)
-	@rm -rf $(NIO_DIR)/.git
 
-$(PLENARY_DIR):
-	git clone --depth=1 --branch v0.1.3 https://github.com/nvim-lua/plenary.nvim $(PLENARY_DIR)
-	@rm -rf $(PLENARY_DIR)/.git
+deps: deps/mini.nvim deps/nvim-treesitter deps/neotest deps/nvim-nio deps/plenary.nvim deps/parsers
+	@echo Pulling...
 
-$(TREESITTER_DIR):
-	git clone --depth=1 --no-single-branch https://github.com/nvim-treesitter/nvim-treesitter $(TREESITTER_DIR)
-	@rm -rf $(TREESITTER_DIR)/.git
+deps/parsers:
+	@mkdir -p deps/parsers
+
+deps/mini.nvim:
+	@mkdir -p deps
+	git clone --filter=blob:none https://github.com/echasnovski/mini.nvim $@
+
+deps/nvim-treesitter:
+	@mkdir -p deps
+	git clone --filter=blob:none https://github.com/nvim-treesitter/nvim-treesitter.git $@
+
+deps/neotest:
+	@mkdir -p deps
+	git clone --filter=blob:none https://github.com/nvim-neotest/neotest $@
+
+deps/nvim-nio:
+	@mkdir -p deps
+	git clone --filter=blob:none https://github.com/nvim-neotest/nvim-nio $@
+
+deps/plenary.nvim:
+	@mkdir -p deps
+	git clone --filter=blob:none https://github.com/nvim-lua/plenary.nvim.git $@
